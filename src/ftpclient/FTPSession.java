@@ -13,7 +13,7 @@ public class FTPSession {
     private Socket socket;
     private PrintStream ud;
     private BufferedReader ind;
-    private int pingTime = 10; //Vi tilføjer en smule delay til ping der giver serveren tid til at processere.
+    private int pingTime = 20; //Vi tilføjer en smule delay til ping der giver serveren tid til at processere.
 
     public FTPSession(String host, int port, String user, String pass) throws IOException {
         socket = new Socket(host, port);
@@ -53,7 +53,7 @@ public class FTPSession {
     }
         
     private String readLines(BufferedReader ind) throws IOException {
-        String svar = "";
+        String response = "";
         String s1;
         int retries = 0;
         int tryCount = 1;
@@ -61,13 +61,15 @@ public class FTPSession {
             if (ind.ready()) {
                 tryCount = 1;
                 s1 = ind.readLine() + "\r\n";
-                svar += s1;
+                response += s1;
             } else {
-                if (svar.isBlank()) {
+                //Hvis vi har fået tekst ud skal serveren ikke processere noget, derfor kun ping-afhængig
+                if (response.isBlank()) {
                     retries = 5;
                 } else {
                     retries = 2;
                 }
+                //Venter på mere data, faldende ventetid for hvert try for ikke at overdrive
                 if (tryCount <= retries) {
                     try {
                         Thread.sleep(pingTime / tryCount);
@@ -79,16 +81,16 @@ public class FTPSession {
                 }
             }
         }
-        return svar;
+        return response;
     }
 
     public String getAvailabeText() throws IOException{
         return readLines(ind);
     }
     
-    public void send(String com) throws IOException {
-        System.out.println("send: \"" + com + "\"");
-        ud.println(com);
+    public void send(String message) throws IOException {
+        System.out.println("Send: \"" + message + "\"");
+        ud.println(message);
         ud.flush();
     }
 
