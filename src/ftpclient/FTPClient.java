@@ -20,7 +20,6 @@ public class FTPClient {
         
         //Initialize passive data connection (for LIST)
         var dataSocket = FTP1.initDataConnection();
-        System.out.println(FTP1.getAvailabeText());
         //List root folder
         FTP1.send("LIST");
         System.out.println(FTP1.getTextFromDataStream(dataSocket));
