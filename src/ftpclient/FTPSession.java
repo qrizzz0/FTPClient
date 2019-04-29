@@ -13,29 +13,46 @@ public class FTPSession {
     private Socket socket;
     private PrintStream ud;
     private BufferedReader ind;
-    private int pingTime = 2;
+    private int pingTime = 2; //Vi tilføjer en smule delay til ping der giver serveren tid til at processere.
 
-    public FTPSession(String host, int port, String user, String kode) throws IOException {
-        long starttime = System.currentTimeMillis();
-        java.net.InetAddress.getByName(host).isReachable(1000);
-        long endtime = System.currentTimeMillis();
-        this.pingTime += (int) (endtime - starttime); //Pingtid 2 højere end reelt.
-        //Løser situtationer hvor serveren skal processere ting.
+    public FTPSession(String host, int port, String user, String pass) throws IOException {
+        socket = new Socket(host, port);
+        ud = new PrintStream(socket.getOutputStream());
+        ind = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        
+        this.pingTime += this.pingTime += pingHost(host);; 
 
+        logIn(user, pass);
+    }
+        
+    //Denne constructor står for de anonyme forbindelser:
+    public FTPSession(String host, int port) throws IOException {
         socket = new Socket(host, port);
         ud = new PrintStream(socket.getOutputStream());
         ind = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        //Log ind
-        String s1 = send("");
-        System.out.println(s1);
-        s1 = send("USER " + user);
-        System.out.println(s1);
-        s1 = send("PASS " + kode);
-        System.out.println(s1);
+        this.pingTime += pingHost(host);
+        
+        logIn("anonymous", "anonymous@domain.com");
     }
 
-    private String readLines(BufferedReader ind) throws IOException {
+    private void logIn(String user, String pass) throws IOException {
+        send("");
+        System.out.println(readLines());
+        send("USER " + user);
+        System.out.println(readLines());
+        send("PASS " + pass);
+        System.out.println(readLines());
+    }
+    
+    private int pingHost(String host) throws IOException {
+        long starttime = System.currentTimeMillis();
+        java.net.InetAddress.getByName(host).isReachable(1000);
+        long endtime = System.currentTimeMillis();
+        return (int) (endtime - starttime); 
+    }
+        
+    public String readLines() throws IOException {
         String svar = "";
         String s1;
         int retries = 0;
@@ -65,17 +82,16 @@ public class FTPSession {
         return svar;
     }
 
-    public String send(String com) throws IOException {
+    public void send(String com) throws IOException {
         System.out.println("send: \"" + com + "\"");
         ud.println(com);
         ud.flush();
-        return readLines(ind);
     }
 
     public Socket initDataConnection() throws IOException {
         //Ask server for passive data connection
-        String response = send("PASV");
-
+        send("PASV");
+        String response = readLines();
         //Tokenize result and throw exception if not a proper data port
         StringTokenizer datasocket = new StringTokenizer(response, "(,)");
         if (datasocket.countTokens() < 7) {

@@ -11,11 +11,11 @@ public class FTPClient {
         
         //Send and print HELP
         String s1;
-        s1 = FTP1.send("HELP");
-        System.out.println(s1);
+        FTP1.send("HELP");
+        System.out.println(FTP1.readLines());
         
         //s1 = FTP2.send("HELP");
-        System.out.println(s1);
+        System.out.println(FTP1.readLines());
         
         
         //Initialize passive data connection (for LIST)
@@ -27,10 +27,10 @@ public class FTPClient {
         s1 = new String (bytes);
         System.out.println(s1);
         
-        //Get a file
-        FTP.getFile("fil.txt");
-        System.out.println(s1);
-        
+        //Get a file */
+        FTP1.getFile("fil.txt");
+        System.out.println(FTP1.readLines());
+        /*
         //Get a file bigger than 1KB
         FTP.getFile("NOR-gate.png");
         
