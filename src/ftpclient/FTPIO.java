@@ -20,6 +20,7 @@ public FTPIO(String host, String user, String kode) throws IOException{
     System.out.println(s1);
     }
 
+//Erstat evt. med binaryread
 private String readLines(BufferedReader ind) throws IOException {
      String s1 = "";
      while (!ind.ready()) { } 
@@ -47,55 +48,50 @@ private String readLines(BufferedReader ind) throws IOException {
      System.out.println("send: " + com);
      ud.println(com);
      ud.flush();
+     //Fix:
      if(com.contains("LIST") || com.contains("RETR")) {
          String s1 = readLines(ind);
          s1 = s1 + readLines(ind);
          return s1;
      }
+     //---
      return readLines(ind);
-
  }
  
  public Socket initDataConnection() throws IOException {
+    //Ask server for passive data connection
     String response = send("PASV");
     
+    //Tokenize result and throw exception if not a proper data port
     StringTokenizer datasocket = new StringTokenizer(response, "(,)");
     if (datasocket.countTokens() < 7) {
         System.out.println("Something went wrong with the datastream!");
         System.out.println("PASV gave response: " + response);
         throw new IOException();
     }
+    //First token unimportant
     datasocket.nextToken();
+    //Next 4 is IP
     String IP = (datasocket.nextToken() + "." + datasocket.nextToken() + "." + datasocket.nextToken() + "." + datasocket.nextToken());
-    
+    //Next 2 is the passive port
     int dataport = (Integer.parseInt(datasocket.nextToken())*256) + Integer.parseInt(datasocket.nextToken()); 
     
     return new Socket (IP, dataport);
  }
  
- public byte[] readFromDataSocket(Socket dataSocket, boolean printFirstKB) throws IOException {
+ public byte[] readFromDataSocket(Socket dataSocket) throws IOException {
     var dataStream = dataSocket.getInputStream();
-    final byte[] buffer = new byte[1];
+    byte[] buffer = new byte[1];
     int read = 1;
-    
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
     
+    //Lav til for loop for at tage downloads i bidder, ellers dør det hele når filer bliver for store
     while ((read = dataStream.read(buffer)) > 0) {
         byteStream.write(buffer);
     }
     
     byte[] outBytes = byteStream.toByteArray();
     //Konverterer string til bytes og putter efterfølgende de første 1024 bytes ind i et andet bytearray og konverterer tilbage til string.
-    if (printFirstKB) {
-        byte[] firstKilobyte = new byte[1024];
-        for (int i = 0; i < 1024; i++) {
-            if (i <= outBytes.length - 1) {
-                firstKilobyte[i] = outBytes[i];
-            }
-        }
-        String s2 = new String (firstKilobyte);
-        System.out.println("First kilobyte: \n****-------------------****\n" + s2 + "\n****-------------------****\n");
-    }
     
     dataStream.close();
     dataSocket.close();
@@ -106,7 +102,7 @@ private String readLines(BufferedReader ind) throws IOException {
  public void getFile(String filename) throws IOException {
     var datasocket = initDataConnection();
     send("RETR " + filename);
-    byte[] readBytes = readFromDataSocket(datasocket, true);
+    byte[] readBytes = readFromDataSocket(datasocket);
      
     try (FileOutputStream fos = new FileOutputStream(filename)) {
         fos.write(readBytes);   

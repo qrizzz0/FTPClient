@@ -31,7 +31,7 @@ public class FTPClient {
         
         //List root folder
         FTP.send("LIST");
-        byte[] bytes = FTP.readFromDataSocket(datasocket, false);
+        byte[] bytes = FTP.readFromDataSocket(datasocket);
         s1 = new String (bytes);
         System.out.println(s1);
         
