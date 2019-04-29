@@ -39,18 +39,24 @@ public class FTPSession {
         String svar = "";
         String s1;
         int retries = 0;
+        int trycount = 0;
         while (true) {
             if (ind.ready()) {
-                retries = 0;
+                trycount = 0;
                 s1 = ind.readLine() + "\r\n";
                 svar += s1;
             } else {
-                if (retries < 3) {
+                if (svar.isBlank()) {
+                    retries = 5;
+                } else {
+                    retries = 2;
+                }
+                if (trycount < retries) {
                     try {
                         Thread.sleep(pingTime);
                     } catch (InterruptedException ex) {
                     }
-                    retries++;
+                    trycount++;
                 } else {
                     break;
                 }
@@ -88,11 +94,12 @@ public class FTPSession {
     }
     
     public void getFile(String filename) throws IOException {
-        var datasocket = initDataConnection();
+        var dataSocket = initDataConnection();
         send("RETR " + filename);
         
         //Start download tråd her
-        
+        FTPDownloadHandler FTPDownloader = new FTPDownloadHandler(dataSocket, filename);
+        new Thread(FTPDownloader).start();
     }
 
     public void createFile(String filename, byte[] content) throws IOException {

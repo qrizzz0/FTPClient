@@ -5,8 +5,8 @@ public class FTPClient {
     public static void main(String[] args) {
         try {
         //Connect to ftp server
-        FTPSession FTP1 = new FTPSession("127.0.0.1", 21, "idunno", "47");
-        FTPSession FTP2 = new FTPSession("mirror.internode.on.net", 21, "anonymous", "anonymous@domain.com");
+        FTPSession FTP1 = new FTPSession("emby.waii.dk", 21, "idunno", "47");
+        //FTPSession FTP2 = new FTPSession("mirror.internode.on.net", 21, "anonymous", "anonymous@domain.com");
         
         
         //Send and print HELP
@@ -14,7 +14,7 @@ public class FTPClient {
         s1 = FTP1.send("HELP");
         System.out.println(s1);
         
-        s1 = FTP2.send("HELP");
+        //s1 = FTP2.send("HELP");
         System.out.println(s1);
         
         
