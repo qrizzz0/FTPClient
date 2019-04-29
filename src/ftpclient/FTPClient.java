@@ -12,24 +12,23 @@ public class FTPClient {
         //Send and print HELP
         String s1;
         FTP1.send("HELP");
-        System.out.println(FTP1.readLines());
+        System.out.println(FTP1.getAvailabeText());
         
         //s1 = FTP2.send("HELP");
-        System.out.println(FTP1.readLines());
+        System.out.println(FTP1.getAvailabeText());
         
         
         //Initialize passive data connection (for LIST)
-    /*  var datasocket = FTP.initDataConnection();
-        
+        var dataSocket = FTP1.initDataConnection();
+        System.out.println(FTP1.getAvailabeText());
         //List root folder
-        FTP.send("LIST");
-        byte[] bytes = FTP.readFromDataSocket(datasocket);
-        s1 = new String (bytes);
-        System.out.println(s1);
+        FTP1.send("LIST");
+        System.out.println(FTP1.getTextFromDataStream(dataSocket));
+        System.out.println(FTP1.getAvailabeText());
         
         //Get a file */
         FTP1.getFile("fil.txt");
-        System.out.println(FTP1.readLines());
+        System.out.println(FTP1.getAvailabeText());
         /*
         //Get a file bigger than 1KB
         FTP.getFile("NOR-gate.png");
