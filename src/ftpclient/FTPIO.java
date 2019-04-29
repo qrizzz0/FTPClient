@@ -91,7 +91,6 @@ private String readLines(BufferedReader ind) throws IOException {
     }
     
     byte[] outBytes = byteStream.toByteArray();
-    //Konverterer string til bytes og putter efterfølgende de første 1024 bytes ind i et andet bytearray og konverterer tilbage til string.
     
     dataStream.close();
     dataSocket.close();
