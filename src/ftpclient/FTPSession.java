@@ -72,7 +72,7 @@ public class FTPSession {
                 //Venter på mere data, faldende ventetid for hvert try for ikke at overdrive
                 if (tryCount <= retries) {
                     try {
-                        Thread.sleep(pingTime / tryCount);
+                        Thread.sleep(pingTime);
                     } catch (InterruptedException ex) {
                     }
                     tryCount++;
@@ -84,7 +84,7 @@ public class FTPSession {
         return response;
     }
 
-    public String getAvailabeText() throws IOException{
+    public String getAvailableText() throws IOException{
         return readLines(ind);
     }
     

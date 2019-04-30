@@ -5,29 +5,34 @@ public class FTPClient {
     public static void main(String[] args) {
         try {
         //Connect to ftp server
-        FTPSession FTP1 = new FTPSession("emby.waii.dk", 21, "idunno", "47");
+        //FTPSession FTP1 = new FTPSession("emby.waii.dk", 21, "idunno", "47");
+        FTPSession FTP1 = new FTPSession("127.0.0.1", 21, "idunno", "47");
         //FTPSession FTP2 = new FTPSession("mirror.internode.on.net", 21, "anonymous", "anonymous@domain.com");
         
         
         //Send and print HELP
         String s1;
         FTP1.send("HELP");
-        System.out.println(FTP1.getAvailabeText());
+        System.out.println(FTP1.getAvailableText());
         
         //s1 = FTP2.send("HELP");
-        System.out.println(FTP1.getAvailabeText());
+        System.out.println(FTP1.getAvailableText());
+        
+        FTPCMDHandler FTP1CMD = new FTPCMDHandler(FTP1);
+        System.out.println(FTP1CMD.listCurrentFolder());
+
+        
+        FTP1CMD.cd("Test Directory/Hej/Med/Dig");
+        System.out.println(FTP1CMD.listCurrentFolder());
+        
+        FTP1CMD.cd("..");
+        System.out.println(FTP1CMD.listCurrentFolder());
         
         
-        //Initialize passive data connection (for LIST)
-        var dataSocket = FTP1.initDataConnection();
-        //List root folder
-        FTP1.send("LIST");
-        System.out.println(FTP1.getTextFromDataStream(dataSocket));
-        System.out.println(FTP1.getAvailabeText());
         
         //Get a file */
         FTP1.getFile("fil.txt");
-        System.out.println(FTP1.getAvailabeText());
+        System.out.println(FTP1.getAvailableText());
         /*
         //Get a file bigger than 1KB
         FTP.getFile("NOR-gate.png");
