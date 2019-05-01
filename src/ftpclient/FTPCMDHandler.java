@@ -44,9 +44,13 @@ public class FTPCMDHandler {
                 StringTokenizer folderTrim = new StringTokenizer(currentDirectory, "/");
                 String previousFolder = "";
                 //Vi springer første token over fordi den er tom (derfor <=)
-                for (int i = 0; i <= folderTrim.countTokens(); i++) {
-                    previousFolder += "/" + folderTrim.nextToken();
-                }   
+                if (folderTrim.countTokens() == 1) {
+                    previousFolder = "/";
+                } else {
+                    for (int i = 1; i < folderTrim.countTokens(); i++) {
+                        previousFolder += "/" + folderTrim.nextToken();
+                    }   
+                }
                 session.send("CWD \"" + previousFolder + "\"");
                 break;
             case ".":

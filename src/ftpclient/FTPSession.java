@@ -1,5 +1,6 @@
 package ftpclient;
 
+import ftpclient.transfer.FTPDownloadHandler;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -115,17 +116,28 @@ public class FTPSession {
         return new Socket(IP, dataport);
     }
     
-    public void getFile(String filename) throws IOException {
+    public FTPDownloadHandler getFile(String filename) throws IOException {
+        send("SIZE " + filename);
+        String response = readLines(ind);
+        //Size returnerer XXX XXXXXX, hvor først er responskode, anden er size i bytes.
+        StringTokenizer sizetokenizer = new StringTokenizer(response, " \n\r");
+        sizetokenizer.nextToken();
+        
+        int size = Integer.parseInt(sizetokenizer.nextToken());
+        
         var dataSocket = initDataConnection();
         send("RETR " + filename);
+        readLines(ind);
         
         //Start download tråd her
-        FTPDownloadHandler FTPDownloader = new FTPDownloadHandler(dataSocket, filename);
+        FTPDownloadHandler FTPDownloader = new FTPDownloadHandler(dataSocket, filename, size);
         new Thread(FTPDownloader).start();
+        return FTPDownloader;
     }
     
     public String getTextFromDataStream(Socket dataSocket) throws IOException {
         BufferedReader textBuffer = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
+        dataSocket.close();
         return readLines(textBuffer);
     }
 
