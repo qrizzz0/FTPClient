@@ -14,17 +14,16 @@ public class FTPCMDHandler {
         //Initialize passive data connection (for LIST)
         var dataSocket = session.initDataConnection();
         //List root folder
-        session.send("LIST");
+        String response = session.send("LIST");
         String list = session.getTextFromDataStream(dataSocket);
         
-        System.out.println(session.getAvailableText());
+        System.out.println(response);
         
         return list;
     }
     
     public void cd(String folder) throws IOException {
-        session.send("PWD");
-        String response = session.getAvailableText();
+        String response = session.send("PWD");
         
         StringTokenizer directoryTrim = new StringTokenizer(response, "\"");
         if (directoryTrim.countTokens() < 3) {

@@ -38,12 +38,12 @@ public class FTPSession {
     }
 
     private void logIn(String user, String pass) throws IOException {
-        send("");
-        System.out.println(readLines(ind));
-        send("USER " + user);
-        System.out.println(readLines(ind));
-        send("PASS " + pass);
-        System.out.println(readLines(ind));
+        String s1 = send("");
+        System.out.println(s1);
+        s1 = send("USER " + user);
+        System.out.println(s1);
+        s1 = send("PASS " + pass);
+        System.out.println(s1);
     }
     
     private int pingHost(String host) throws IOException {
@@ -66,7 +66,7 @@ public class FTPSession {
             } else {
                 //Hvis vi har fået tekst ud skal serveren ikke processere noget, derfor kun ping-afhængig
                 if (response.isBlank()) {
-                    retries = 5;
+                    retries = 8;
                 } else {
                     retries = 2;
                 }
@@ -89,22 +89,36 @@ public class FTPSession {
         return readLines(ind);
     }
     
-    public void send(String message) throws IOException {
+    public String send(String message) throws IOException {
         System.out.println("Send: \"" + message + "\"");
         ud.println(message);
         ud.flush();
+        return readLines(ind);
     }
 
     public Socket initDataConnection() throws IOException {
-        //Ask server for passive data connection
-        send("PASV");
-        String response = readLines(ind);
-        //Tokenize result and throw exception if not a proper data port
-        StringTokenizer datasocket = new StringTokenizer(response, "(,)");
-        if (datasocket.countTokens() < 7) {
-            System.out.println("Something went wrong with the datastream!");
-            System.out.println("PASV gave response: " + response);
-            throw new IOException();
+        int retryCount = 1;
+        boolean properResponse = false;
+        StringTokenizer datasocket = null;
+        while (!properResponse) {
+            //Ask server for passive data connection
+            String response = send("PASV");
+            //Tokenize result and throw exception if not a proper data port
+            datasocket = new StringTokenizer(response, "(,)");
+            if (datasocket.countTokens() < 7) {
+                System.out.println("Something went wrong with the datastream!");
+                System.out.println("PASV gave response: " + response);
+                if (retryCount <= 5) {
+                    System.out.println("Clearing text from console and retrying.. Try: " + retryCount + "/5");
+                    try { Thread.sleep(500); } catch (InterruptedException ex) {}
+                    this.getAvailableText();
+                } else {
+                    System.out.println("Retries failed! Aborting with exception!");
+                    throw new IOException();
+                }
+            } else {
+                properResponse = true;
+            }
         }
         //First token unimportant
         datasocket.nextToken();
@@ -117,17 +131,25 @@ public class FTPSession {
     }
     
     public FTPDownloadHandler getFile(String filename) throws IOException {
-        send("SIZE " + filename);
-        String response = readLines(ind);
+        String response = send("SIZE " + filename);
         //Size returnerer XXX XXXXXX, hvor først er responskode, anden er size i bytes.
         StringTokenizer sizetokenizer = new StringTokenizer(response, " \n\r");
-        sizetokenizer.nextToken();
         
+        //Håndter hvis der ikke kommer rigtigt svar
+        int retries = 1;
+        while (sizetokenizer.countTokens() != 2 && retries <= 5) {
+            System.out.println("Something went wrong, SIZE received: " + response);
+            System.out.println("Retrying: " + retries + "/5");
+            response = send("SIZE " + filename);
+            sizetokenizer = new StringTokenizer(response, " \n\r");
+            retries++;
+        }
+        
+        sizetokenizer.nextToken();
         int size = Integer.parseInt(sizetokenizer.nextToken());
         
         var dataSocket = initDataConnection();
         send("RETR " + filename);
-        readLines(ind);
         
         //Start download tråd her
         FTPDownloadHandler FTPDownloader = new FTPDownloadHandler(dataSocket, filename, size);

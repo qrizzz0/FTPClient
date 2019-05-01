@@ -12,8 +12,8 @@ public class FTPClient {
         
         //Send and print HELP
         String s1;
-        FTP1.send("HELP");
-        System.out.println(FTP1.getAvailableText());
+        s1 = FTP1.send("HELP");
+        System.out.println(s1);
         
         //s1 = FTP2.send("HELP");
         System.out.println(FTP1.getAvailableText());
@@ -42,12 +42,15 @@ public class FTPClient {
         
         //Get a file bigger than 1KB
         FTP1.getFile("dotNetFx45.exe");
-        var test = FTP1.getFile("FlixGrab+_v1.5.8.323_Cracked_By_DFoX.rar");
+        //var test = FTP1.getFile("FlixGrab+_v1.5.8.323_Cracked_By_DFoX.rar");
+        var test = FTP1.getFile("lubuntu-18.04-desktop-amd64.iso");
+        
         //FTP1.getFile("ahem.png");
         
-        for (int i = 0; i < 25; i++) {
+        while (!test.isFinished()) {
             System.out.println("Download: " + test.getFileName() + "   -   " + test.getProcessedBytes() + "/" + test.getSize());
-            try { Thread.sleep(2500); } catch (InterruptedException ex) {}
+            System.out.println("Speed: " + test.getCurrentSpeed() + " Kb/s");
+            try { Thread.sleep(1000); } catch (InterruptedException ex) {}
         }
         
         
