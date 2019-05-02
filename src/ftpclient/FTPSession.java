@@ -1,7 +1,9 @@
 package ftpclient;
 
 import ftpclient.transfer.FTPDownloadHandler;
+import ftpclient.transfer.FTPUploadHandler;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -126,7 +128,9 @@ public class FTPSession {
         String IP = (datasocket.nextToken() + "." + datasocket.nextToken() + "." + datasocket.nextToken() + "." + datasocket.nextToken());
         //Next 2 is the passive port
         int dataport = (Integer.parseInt(datasocket.nextToken()) * 256) + Integer.parseInt(datasocket.nextToken());
-
+        
+        System.out.println("Datastream on port: " + dataport);
+        
         return new Socket(IP, dataport);
     }
     
@@ -153,7 +157,9 @@ public class FTPSession {
         
         //Start download tråd her
         FTPDownloadHandler FTPDownloader = new FTPDownloadHandler(dataSocket, filename, size);
-        new Thread(FTPDownloader).start();
+        //new Thread(FTPDownloader).start();
+        Thread thread = new Thread(FTPDownloader);
+        thread.start();
         return FTPDownloader;
     }
     
@@ -163,10 +169,17 @@ public class FTPSession {
         return readLines(textBuffer);
     }
 
-    public void createFile(String filename, byte[] content) throws IOException {
+    public FTPUploadHandler uploadFile(String fileLocation) throws IOException {
+        File file = new File(fileLocation);
+        
         var dataSocket = initDataConnection();
-        send("STOR " + filename);
-        //Start up-tråd her
+        send("STOR " + file.getName());
+        
+        FTPUploadHandler FTPUploader = new FTPUploadHandler(dataSocket, file);
+        Thread thread = new Thread(FTPUploader);
+        thread.start();
+        
+        return FTPUploader;
     }
 
 }

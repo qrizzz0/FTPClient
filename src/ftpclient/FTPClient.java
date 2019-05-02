@@ -1,4 +1,5 @@
 package ftpclient;
+import ftpclient.transfer.*;
 import java.io.IOException;
 
 public class FTPClient {
@@ -41,25 +42,28 @@ public class FTPClient {
         System.out.println(FTP1.getAvailableText());
         
         //Get a file bigger than 1KB
-        FTP1.getFile("dotNetFx45.exe");
+        //FTP1.getFile("dotNetFx45.exe");
         //var test = FTP1.getFile("FlixGrab+_v1.5.8.323_Cracked_By_DFoX.rar");
-        var test = FTP1.getFile("lubuntu-18.04-desktop-amd64.iso");
         
+        //FTPUploadHandler test = FTP1.uploadFile("Courage.the.Cowardly.Dog.S04E22.DANiSH.480p.WEBRip.H.265-WhyNot.mp4");
+        FTPDownloadHandler test = FTP1.getFile("gerudo-atlantis.the.lost.empire.bd.r00");
+        FTPDownloadHandler lubuntu = FTP1.getFile("lubuntu-18.04-desktop-amd64.iso");
         //FTP1.getFile("ahem.png");
         
-        while (!test.isFinished()) {
-            System.out.println("Download: " + test.getFileName() + "   -   " + test.getProcessedBytes() + "/" + test.getSize());
+        while (true) {
+            System.out.println("Upload: " + test.getFileName() + "   -   " + test.getProcessedBytes() + "/" + test.getSize());
             System.out.println("Speed: " + test.getCurrentSpeed() + " Kb/s");
+            System.out.println("Finished?: " + test.isFinished());
+            System.out.println("Download: " + lubuntu.getFileName() + "   -   " + lubuntu.getProcessedBytes() + "/" + lubuntu.getSize());
+            System.out.println("Speed: " + lubuntu.getCurrentSpeed() + " Kb/s");
+            System.out.println("Finished?: " + lubuntu.isFinished());
             try { Thread.sleep(1000); } catch (InterruptedException ex) {}
+            
+            if (44 == 43) {
+                break;
+            }
         }
         
-        
-        /*
-        //Create a file
-        String data = "Hello, how are you doing? :D";
-        byte[] content = data.getBytes();
-        FTP.createFile("NewFile.txt", content);
-    */
         } 
         catch (IOException ex) {
             System.out.println("Something went wrong, maybe the server does not accept connections?");
