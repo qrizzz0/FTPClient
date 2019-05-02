@@ -13,12 +13,28 @@ import java.net.Socket;
  *
  * @author Kristofer
  */
-public class FTPUploadHandler {
+public class FTPUploadHandler extends FTPTransferInterface {
+    
     public void FTPUploader(Socket dataSocket, String filename, byte[] content) throws IOException {
+        this.dataSocket = dataSocket;
+        System.out.println("File: " + filename + " delivered to server!");
+    }
+    
+    public void FTPUploader(Socket dataSocket, String filename, String localLocation) throws IOException {
+        this.dataSocket = dataSocket;
+        System.out.println("File: " + filename + " delivered to server!");
+    }
+    
+    private void uploadFromFileStream() {
         PrintStream dataStream = new PrintStream(dataSocket.getOutputStream());
         dataStream.write(content);
         dataStream.close();
         dataSocket.close();
-        System.out.println("File: " + filename + " delivered to server!");
     }
+
+    @Override
+    public void run() {
+        //Start upload!
+    }
+    
 }
