@@ -1,20 +1,27 @@
 package ftpclient.transfer;
 
+import ftpclient.FTPSession;
+import ftpclient.FTPSessionManager;
+import java.io.IOException;
 import java.net.Socket;
 
-public abstract class FTPTransferInterface implements Runnable {
+public abstract class FTPTransferInterface extends FTPSession {
     protected Socket dataSocket;
     protected String fileName;
     protected long processedBytes;
     protected long size;
     protected boolean finished = false;
     protected int bufferSize = 8096;
-    
+        
     //Til hastighedsudregning.
     private int speed; //Last calculated speed in kb/s
     private long currentTime;
     private long lastTime;
     private long lastProcessedBytes;
+    
+    public FTPTransferInterface(FTPSessionManager sessionManager) throws IOException {
+        super(sessionManager);
+    }
     
     public long getProcessedBytes() {
         return this.processedBytes;
@@ -49,6 +56,14 @@ public abstract class FTPTransferInterface implements Runnable {
     
     public boolean isFinished() {
         return finished;
+    }
+    
+    @Override
+    public String logString() {
+        return
+        fileName + "   -   " + processedBytes + "/" + size +
+        "\tSpeed: " + speed + " Kb/s";
+        
     }
     
 }

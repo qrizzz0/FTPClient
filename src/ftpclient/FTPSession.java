@@ -1,13 +1,6 @@
 package ftpclient;
 
-import ftpclient.transfer.FTPDownloadHandler;
-import ftpclient.transfer.FTPUploadHandler;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
@@ -17,35 +10,15 @@ public class FTPSession {
     private PrintStream ud;
     private BufferedReader ind;
     private int pingTime = 20; //Vi tilføjer en smule delay til ping der giver serveren tid til at processere.
+    private FTPSessionManager sessionManager;
 
-    public FTPSession(String host, int port, String user, String pass) throws IOException {
-        socket = new Socket(host, port);
+    public FTPSession(FTPSessionManager sessionManager) throws IOException {
+        this.sessionManager = sessionManager;
+        socket = new Socket(sessionManager.getHostname(), sessionManager.getPort());
         ud = new PrintStream(socket.getOutputStream());
         ind = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        
-        this.pingTime += this.pingTime += pingHost(host); 
-
-        logIn(user, pass);
-    }
-        
-    //Denne constructor står for de anonyme forbindelser:
-    public FTPSession(String host, int port) throws IOException {
-        socket = new Socket(host, port);
-        ud = new PrintStream(socket.getOutputStream());
-        ind = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-        this.pingTime += pingHost(host);
-        
-        logIn("anonymous", "anonymous@domain.com");
-    }
-
-    private void logIn(String user, String pass) throws IOException {
-        String s1 = send("");
-        System.out.println(s1);
-        s1 = send("USER " + user);
-        System.out.println(s1);
-        s1 = send("PASS " + pass);
-        System.out.println(s1);
+        this.pingTime += this.pingTime += pingHost(sessionManager.getHostname()); 
+        sessionManager.logIn(this);
     }
     
     private int pingHost(String host) throws IOException {
@@ -58,7 +31,7 @@ public class FTPSession {
     private String readLines(BufferedReader ind) throws IOException {
         String response = "";
         String s1;
-        int retries = 0;
+        int retries;
         int tryCount = 1;
         while (true) {
             if (ind.ready()) {
@@ -74,10 +47,7 @@ public class FTPSession {
                 }
                 //Venter på mere data, faldende ventetid for hvert try for ikke at overdrive
                 if (tryCount <= retries) {
-                    try {
-                        Thread.sleep(pingTime);
-                    } catch (InterruptedException ex) {
-                    }
+                    try { Thread.sleep(pingTime); } catch (InterruptedException ex) {}
                     tryCount++;
                 } else {
                     break;
@@ -134,52 +104,21 @@ public class FTPSession {
         return new Socket(IP, dataport);
     }
     
-    public FTPDownloadHandler getFile(String filename) throws IOException {
-        String response = send("SIZE " + filename);
-        //Size returnerer XXX XXXXXX, hvor først er responskode, anden er size i bytes.
-        StringTokenizer sizetokenizer = new StringTokenizer(response, " \n\r");
-        
-        //Håndter hvis der ikke kommer rigtigt svar
-        int retries = 1;
-        while (sizetokenizer.countTokens() != 2 && retries <= 5) {
-            System.out.println("Something went wrong, SIZE received: " + response);
-            System.out.println("Retrying: " + retries + "/5");
-            response = send("SIZE " + filename);
-            sizetokenizer = new StringTokenizer(response, " \n\r");
-            retries++;
-        }
-        
-        sizetokenizer.nextToken();
-        int size = Integer.parseInt(sizetokenizer.nextToken());
-        
-        var dataSocket = initDataConnection();
-        send("RETR " + filename);
-        
-        //Start download tråd her
-        FTPDownloadHandler FTPDownloader = new FTPDownloadHandler(dataSocket, filename, size);
-        //new Thread(FTPDownloader).start();
-        Thread thread = new Thread(FTPDownloader);
-        thread.start();
-        return FTPDownloader;
-    }
-    
     public String getTextFromDataStream(Socket dataSocket) throws IOException {
         BufferedReader textBuffer = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
         dataSocket.close();
         return readLines(textBuffer);
     }
-
-    public FTPUploadHandler uploadFile(String fileLocation) throws IOException {
-        File file = new File(fileLocation);
-        
-        var dataSocket = initDataConnection();
-        send("STOR " + file.getName());
-        
-        FTPUploadHandler FTPUploader = new FTPUploadHandler(dataSocket, file);
-        Thread thread = new Thread(FTPUploader);
-        thread.start();
-        
-        return FTPUploader;
+    
+    public void closeSession() throws IOException {
+        ud.close();
+        ind.close();
+        socket.close();
+        sessionManager.logOut(this);
+    }
+    
+    public String logString() {
+        return "Plain Session";
     }
 
 }

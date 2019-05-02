@@ -1,15 +1,19 @@
 package ftpclient.transfer;
 
+import ftpclient.FTPSessionManager;
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.StringTokenizer;
 
-public class FTPDownloadHandler extends FTPTransferInterface {
+public class FTPDownloadHandler extends FTPTransferInterface implements Runnable {
     
-    public FTPDownloadHandler(Socket dataSocket, String fileName, long size) throws IOException {
-        this.dataSocket = dataSocket;
+    public FTPDownloadHandler(FTPSessionManager sessionManager, String fileName) throws IOException {
+        super(sessionManager);
         this.fileName = fileName;
-        this.size = size;
+        this.size = requestSize();
+        this.dataSocket = initDataConnection();
+        send("RETR " + fileName);
+        new Thread(this).start();
     }
     
     @Override
@@ -28,29 +32,49 @@ public class FTPDownloadHandler extends FTPTransferInterface {
         int read = 1;
         int noReads = 0;
         
-        while ((read = dataStream.read(buffer)) > 0 && !this.finished) {
-            fos.write(buffer, 0, read);
-            fos.flush();
-            this.processedBytes += read;
-            
+        while (!this.finished) {
+            read = dataStream.read(buffer);
             if (read <= 0) {
-                noReads++;
-                try { Thread.sleep(10); } catch (InterruptedException ex) {}
+                if (dataSocket.isClosed()) {
+                    throw new IOException();
+                } else {
+                    try { Thread.sleep(5); } catch (InterruptedException ex) {}
+                }
+            } else {           
+                fos.write(buffer, 0, read);
+                fos.flush();
+                this.processedBytes += read;
             }
-
-            this.finished = this.size == this.processedBytes; 
-            this.finished = noReads >= 100;
+            
+            this.finished = this.size == this.processedBytes;
             this.speedCalculator(bufferSize);
-        }
-        if (!this.finished) {
-            //Something must be wrong, has the size changed on the server?
-            this.finished = true;
         }
         
         fos.close();
         dataStream.close();
         dataSocket.close();
+        closeSession();
     }
    
+    private long requestSize() throws IOException {
+        int retries = 0;
+        while (retries <= 5) {
+            String response = send("SIZE " + this.fileName);
+            StringTokenizer sizetokenizer = new StringTokenizer(response, " \n\r");
+            if (sizetokenizer.countTokens() == 2) {
+                sizetokenizer.nextToken();
+                long size = Integer.parseInt(sizetokenizer.nextToken());
+                return size;
+            }
+            retries++;
+        }
+        throw new IOException();
+    }
+    
+    @Override
+    public String logString() {
+        return "Download: " + super.logString();
+    }
+    
     
 }
