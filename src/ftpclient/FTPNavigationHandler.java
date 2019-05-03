@@ -82,6 +82,10 @@ public class FTPNavigationHandler extends FTPSession {
         return (directoryTrim.nextToken());
     }
     
+    public String getLastDirectory() {
+        return lastDirectory;
+    }
+    
     @Override
     public void restartSession() throws IOException {
         super.restartSession();

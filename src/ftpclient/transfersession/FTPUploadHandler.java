@@ -30,6 +30,7 @@ public class FTPUploadHandler extends FTPTransferInterface implements Runnable {
     }
 
     private void uploadFromFile(File file) throws IOException {
+        send("STOR " + fileName);
         OutputStream outStream = dataSocket.getOutputStream();
         BufferedOutputStream dataStream = new BufferedOutputStream(outStream);
         InputStream fileStream = new FileInputStream(file);
@@ -43,7 +44,7 @@ public class FTPUploadHandler extends FTPTransferInterface implements Runnable {
                 } else {
                     try { Thread.sleep(5); } catch (InterruptedException ex) {}
                 }
-            } else {           
+            } else {    
                 dataStream.write(uploadBuffer, 0, uploaded);
                 this.processedBytes += uploaded;
             }
@@ -53,6 +54,7 @@ public class FTPUploadHandler extends FTPTransferInterface implements Runnable {
         dataStream.flush();
         dataStream.close();
         dataSocket.close();
+        closeSession();
     }
         
     @Override

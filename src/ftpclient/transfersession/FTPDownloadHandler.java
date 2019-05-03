@@ -12,7 +12,6 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
         this.fileName = fileName;
         this.size = requestSize();
         this.dataSocket = initDataConnection();
-        send("RETR " + fileName);
         new Thread(this).start();
     }
     
@@ -26,6 +25,7 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
     }
     
     private void writeFileFromSocket(Socket datasocket, String filename) throws IOException {
+        send("RETR " + fileName);
         InputStream dataStream = dataSocket.getInputStream();
         FileOutputStream fos = new FileOutputStream(filename);
         byte[] buffer = new byte[bufferSize];
