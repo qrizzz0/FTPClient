@@ -1,7 +1,5 @@
 package ftpclient;
 
-import ftpclient.transfer.FTPDownloadHandler;
-import ftpclient.transfer.FTPUploadHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -56,9 +54,11 @@ public class FTPSessionManager {
     
     public String sessionInfo() {
         String result = "";
-        for (FTPSession session : sessionList) { 		      
-            result += session.logString() + "\n";
+        //for (FTPSession session : sessionList) { //En tråd kan tilføje/fjerne sig selv her mens det køres, det dræber foreach	
+        for (int i = 1; i <= sessionList.size(); i++) {
+            result += i + ": " + sessionList.get(i-1).logString() + "\n";
         }   		
         return result;
     }
+    
 }

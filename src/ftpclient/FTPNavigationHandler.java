@@ -4,9 +4,18 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 public class FTPNavigationHandler extends FTPSession {
+    private final FTPSessionManager sessionManager;
+    private String lastDirectory = "/";
     
     public FTPNavigationHandler(FTPSessionManager sessionManager) throws IOException {
         super(sessionManager);
+        this.sessionManager = sessionManager;
+    }
+    
+    public FTPNavigationHandler(FTPSessionManager sessionManager, String startDirectory) throws IOException {
+        super(sessionManager);
+        this.sessionManager = sessionManager;
+        cd(startDirectory); 
     }
     
     public String listCurrentFolder() throws IOException {
@@ -21,7 +30,7 @@ public class FTPNavigationHandler extends FTPSession {
         return list;
     }
     
-    public void cd(String folder) throws IOException {
+    public final void cd(String folder) throws IOException {
         String currentDirectory = this.getCurrentFolder();
         switch (folder) {
             case "..":
@@ -40,6 +49,8 @@ public class FTPNavigationHandler extends FTPSession {
                     }   
                 }
                 send("CWD \"" + previousFolder + "\"");
+                System.out.println(getAvailableText());
+                lastDirectory = previousFolder;
                 break;
             case ".":
                 //Do nothing :p
@@ -47,6 +58,7 @@ public class FTPNavigationHandler extends FTPSession {
             default:
                 send("CWD \"" + folder + "\"");
                 System.out.println(getAvailableText());
+                lastDirectory = folder;
                 break;
         }
     }
@@ -56,12 +68,24 @@ public class FTPNavigationHandler extends FTPSession {
         
         StringTokenizer directoryTrim = new StringTokenizer(response, "\"");
         if (directoryTrim.countTokens() < 3) {
+            if (response.contains("421 ")) {
+                System.out.println("Control connection closed - restarting session!");
+                restartSession();
+                return getCurrentFolder();
+            } else {
             System.out.println("Something went wrong with the datastream!");
             System.out.println("PWD gave response: " + response);
-            throw new IOException();
+            closeSession();
+            }
         }
         directoryTrim.nextToken();
         return (directoryTrim.nextToken());
+    }
+    
+    @Override
+    public void restartSession() throws IOException {
+        super.restartSession();
+        cd(lastDirectory);
     }
     
     @Override

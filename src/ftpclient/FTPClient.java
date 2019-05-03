@@ -1,6 +1,7 @@
 package ftpclient;
 
-import ftpclient.transfer.*;
+import ftpclient.transfersession.FTPDownloadHandler;
+import ftpclient.transfersession.FTPUploadHandler;
 import java.io.IOException;
 
 public class FTPClient {
@@ -46,12 +47,12 @@ public class FTPClient {
         //Get a file bigger than 1KB
         //FTP1.getFile("dotNetFx45.exe");
         
-        FTPDownloadHandler test = new FTPDownloadHandler(FTP, "FlixGrab+_v1.5.8.323_Cracked_By_DFoX.rar");
+        //FTPDownloadHandler test = new FTPDownloadHandler(FTP, "FlixGrab+_v1.5.8.323_Cracked_By_DFoX.rar");
                 
-        //FTPUploadHandler test = FTP1.uploadFile("Courage.the.Cowardly.Dog.S04E22.DANiSH.480p.WEBRip.H.265-WhyNot.mp4");
+        new FTPUploadHandler(FTP,"Courage.the.Cowardly.Dog.S04E22.DANiSH.480p.WEBRip.H.265-WhyNot.mp4");
         //FTPDownloadHandler test = FTP1.getFile("gerudo-atlantis.the.lost.empire.bd.r00");
         //FTPSession FTP2 = new FTPSession("emby.waii.dk", 21, "idunno", "47");
-        FTPDownloadHandler lubuntu = new FTPDownloadHandler(FTP, "lubuntu-18.04-desktop-amd64.iso");
+        //FTPDownloadHandler lubuntu = new FTPDownloadHandler(FTP, "lubuntu-18.04-desktop-amd64.iso");
         //FTP1.getFile("ahem.png");
         
         while (1 != 2) {

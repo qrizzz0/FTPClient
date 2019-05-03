@@ -1,4 +1,4 @@
-package ftpclient.transfer;
+package ftpclient.transfersession;
 
 import ftpclient.FTPSession;
 import ftpclient.FTPSessionManager;

@@ -10,10 +10,14 @@ public class FTPSession {
     private PrintStream ud;
     private BufferedReader ind;
     private int pingTime = 20; //Vi tilføjer en smule delay til ping der giver serveren tid til at processere.
-    private FTPSessionManager sessionManager;
+    private final FTPSessionManager sessionManager;
 
     public FTPSession(FTPSessionManager sessionManager) throws IOException {
         this.sessionManager = sessionManager;
+        initConnection();
+    }
+    
+    private void initConnection() throws IOException {
         socket = new Socket(sessionManager.getHostname(), sessionManager.getPort());
         ud = new PrintStream(socket.getOutputStream());
         ind = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -61,14 +65,14 @@ public class FTPSession {
         return readLines(ind);
     }
     
-    public String send(String message) throws IOException {
+    public final String send(String message) throws IOException {
         System.out.println("Send: \"" + message + "\"");
         ud.println(message);
         ud.flush();
         return readLines(ind);
     }
 
-    public Socket initDataConnection() throws IOException {
+    public final Socket initDataConnection() throws IOException {
         int retryCount = 1;
         boolean properResponse = false;
         StringTokenizer datasocket = null;
@@ -115,6 +119,19 @@ public class FTPSession {
         ind.close();
         socket.close();
         sessionManager.logOut(this);
+    }
+    
+    public void restartSession() throws IOException {
+        closeSession();
+        initConnection();
+    }
+    
+    public boolean socketAlive() throws IOException {
+        boolean alive = true;
+        String response = send("NOOP");
+        alive = response.matches(".*200.*");
+        alive = !socket.isClosed();
+        return alive;
     }
     
     public String logString() {

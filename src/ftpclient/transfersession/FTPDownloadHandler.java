@@ -1,4 +1,4 @@
-package ftpclient.transfer;
+package ftpclient.transfersession;
 
 import ftpclient.FTPSessionManager;
 import java.io.*;
@@ -29,11 +29,9 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
         InputStream dataStream = dataSocket.getInputStream();
         FileOutputStream fos = new FileOutputStream(filename);
         byte[] buffer = new byte[bufferSize];
-        int read = 1;
-        int noReads = 0;
         
         while (!this.finished) {
-            read = dataStream.read(buffer);
+            int read = dataStream.read(buffer);
             if (read <= 0) {
                 if (dataSocket.isClosed()) {
                     throw new IOException();
@@ -50,6 +48,7 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
             this.speedCalculator(bufferSize);
         }
         
+        fos.flush();
         fos.close();
         dataStream.close();
         dataSocket.close();
@@ -75,6 +74,5 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
     public String logString() {
         return "Download: " + super.logString();
     }
-    
     
 }
