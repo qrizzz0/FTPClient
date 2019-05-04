@@ -66,16 +66,22 @@ public class FTPNavigationHandler extends FTPSession {
     public String getCurrentFolder() throws IOException {
         String response = send("PWD");
         
+        //I mangel på bedre, en smule farligt, men det kan ske at PWD ikke får svaret tilbage :p
+        if (response.isBlank()) {
+            return getCurrentFolder();
+        }
+        
         StringTokenizer directoryTrim = new StringTokenizer(response, "\"");
         if (directoryTrim.countTokens() < 3) {
             if (response.contains("421 ")) {
-                System.out.println("Control connection closed - restarting session!");
+                System.out.println("Control connection for navigator closed - restarting session!");
                 restartSession();
                 return getCurrentFolder();
             } else {
             System.out.println("Something went wrong with the datastream!");
             System.out.println("PWD gave response: " + response);
             closeSession();
+            return null;
             }
         }
         directoryTrim.nextToken();
