@@ -7,7 +7,6 @@ package FTPGUI;
 
 import java.io.File;
 import javax.swing.event.TreeModelListener;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
@@ -39,7 +38,6 @@ public class LocalTreeModel implements TreeModel {
         } else if (index >= contents.length) {
             return -1;
         }
-        
         return new File(((File)folder).getPath(), contents[index]);
     }
 

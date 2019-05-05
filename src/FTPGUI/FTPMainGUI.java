@@ -1,8 +1,19 @@
 package FTPGUI;
 
+import FTPGUI.ContextMenu.ContextMenu;
+import FTPGUI.ContextMenu.ContextMenuRight;
+import ftpclient.FTPNavigationHandler;
+import ftpclient.FTPSession;
+import ftpclient.FTPSessionManager;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 public class FTPMainGUI extends javax.swing.JFrame {
 
     private LocalTreeModel localFileTree = new LocalTreeModel();
+    private RemoteTreeModel remoteTreeModel;
 
     public FTPMainGUI() {
         initComponents();
@@ -64,6 +75,11 @@ public class FTPMainGUI extends javax.swing.JFrame {
         });
 
         jButton1.setText("Connect");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelConnectLayout = new javax.swing.GroupLayout(jPanelConnect);
         jPanelConnect.setLayout(jPanelConnectLayout);
@@ -132,9 +148,22 @@ public class FTPMainGUI extends javax.swing.JFrame {
         jTreeLeft.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jTreeLeft.setModel(localFileTree);
         jTreeLeft.setPreferredSize(null);
+        jTreeLeft.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTreeLeftMouseReleased(evt);
+            }
+        });
         jScrollPaneTreeLeft.setViewportView(jTreeLeft);
 
+        jScrollPaneTreeRight.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        jTreeRight.setModel(remoteTreeModel);
         jTreeRight.setPreferredSize(null);
+        jTreeRight.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTreeRightMouseReleased(evt);
+            }
+        });
         jScrollPaneTreeRight.setViewportView(jTreeRight);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -155,10 +184,10 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(jScrollPaneConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPaneTreeRight, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(419, 419, 419))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPaneTreeRight, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(219, 219, 219))
         );
 
         pack();
@@ -184,15 +213,75 @@ public class FTPMainGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jScrollPaneTreeLeftMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        boolean connect = true;
+        String host = jTextFieldHost.getText();
+        int port = 21;
+        String username = jTextFieldUser.getText();
+        String password = new String(jPasswordField.getPassword());
+        
+        if (host.isBlank()) {
+                JOptionPane.showMessageDialog(null, "You need to enter a host to connect to!", "Enter host!", JOptionPane.WARNING_MESSAGE);
+                connect = false;
+        }
+        
+        if (!jTextFieldPort.getText().isBlank()) {
+            try { 
+                port = Integer.parseInt(jTextFieldPort.getText()); 
+                if (port < 1 || port > 65535) {
+                    throw new Exception();
+                }
+            } catch (Exception ex) { 
+                connect = false;
+                JOptionPane.showMessageDialog(null, "The port needs to be an integer value between 1-65535!", "Wrong port!", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        
+        if (connect) {
+        try {
+                FTPSessionManager FTPLogin;
+                if (username.isBlank() || password.isBlank()) {
+                    FTPLogin = new FTPSessionManager(host, port);
+                } else {
+                    FTPLogin = new FTPSessionManager(host, port, username, password);
+                }
+            
+                FTPSession FTPSession1 = new FTPSession(FTPLogin);
+                FTPNavigationHandler FTPNav1 = new FTPNavigationHandler(FTPLogin);
+            
+                var remoteTree = new RemoteTreeModel(FTPNav1);
+                jTreeRight.setModel(remoteTree);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                connect = false;
+            }
+        }
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jTreeLeftMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeLeftMouseReleased
+        if (SwingUtilities.isRightMouseButton(evt)) {
+            System.out.println("Right Mouse pressed on left tree!");
+            int selectedRow = jTreeLeft.getRowForLocation(evt.getX(), evt.getY());
+            jTreeLeft.setSelectionRow(selectedRow);
+            System.out.println(selectedRow);
+        }
+    }//GEN-LAST:event_jTreeLeftMouseReleased
+
+    private void jTreeRightMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeRightMouseReleased
+        if (SwingUtilities.isRightMouseButton(evt)) {
+            int selectedRow = jTreeRight.getRowForLocation(evt.getX(), evt.getY());
+            jTreeRight.setSelectionRow(selectedRow);
+            System.out.println(selectedRow);
+           
+            RemoteFile remoteFile = (RemoteFile) jTreeRight.getLastSelectedPathComponent();
+            
+            ContextMenuRight menu = new ContextMenuRight(remoteFile);
+            menu.show(evt.getComponent(), evt.getX(), evt.getY());
+            
+        }
+    }//GEN-LAST:event_jTreeRightMouseReleased
+
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -210,12 +299,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FTPMainGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new FTPMainGUI().setVisible(true);
@@ -223,6 +307,11 @@ public class FTPMainGUI extends javax.swing.JFrame {
         });
     }
 
+    
+    public void setRemoteTree(FTPSessionManager sessionManager) throws IOException {
+        FTPNavigationHandler FTPNav1 = new FTPNavigationHandler(sessionManager);
+        remoteTreeModel = new RemoteTreeModel(FTPNav1);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabelHost;
