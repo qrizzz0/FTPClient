@@ -71,14 +71,24 @@ public class FTPSession {
         ud.flush();
         return readLines(ind);
     }
+    
+    public final String sendForceFeedback(String message) throws IOException {
+        String response = send(message);
+        if (response.isBlank()) {
+            return forceResponse();
+        }
+        
+        return response;
+    }
 
     public final Socket initDataConnection() throws IOException {
-        int retryCount = 1;
+        
         boolean properResponse = false;
         StringTokenizer datasocket = null;
+        int retryCount = 1;
         while (!properResponse) {
             //Ask server for passive data connection
-            String response = send("PASV");
+            String response = sendForceFeedback("PASV");
             //Tokenize result and throw exception if not a proper data port
             datasocket = new StringTokenizer(response, "(,)");
             if (datasocket.countTokens() < 7) {
@@ -88,6 +98,7 @@ public class FTPSession {
                     System.out.println("Clearing text from console and retrying.. Try: " + retryCount + "/5");
                     try { Thread.sleep(500); } catch (InterruptedException ex) {}
                     this.getAvailableText();
+                    retryCount++;
                 } else {
                     System.out.println("Retries failed! Aborting with exception!");
                     throw new IOException();
@@ -110,8 +121,24 @@ public class FTPSession {
     
     public String getTextFromDataStream(Socket dataSocket) throws IOException {
         BufferedReader textBuffer = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
-        dataSocket.close();
         return readLines(textBuffer);
+    }
+    
+    public String forceResponse() throws IOException {
+        String response = "";
+        int retryCount = 1;
+        while (response.isEmpty() && retryCount < 10) {
+            try { Thread.sleep(500); } catch (InterruptedException ex) {}
+            response = readLines(ind);
+            System.out.println("Server not responding.. Retying: " + retryCount + "/10");
+            retryCount++;
+        }
+        if (response.isEmpty()) {
+            System.out.println("Forced response never came back. Killing session!");
+            throw new IOException();
+        }
+        
+        return response;
     }
     
     public void closeSession() throws IOException {

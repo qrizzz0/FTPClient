@@ -1,5 +1,6 @@
 package ftpclient;
 
+import FTPGUI.RemoteFile;
 import ftpclient.transfersession.FTPDownloadHandler;
 import ftpclient.transfersession.FTPUploadHandler;
 import java.io.IOException;
@@ -23,8 +24,12 @@ public class FTPClient {
         System.out.println(FTPSession1.getAvailableText());
         
         FTPNavigationHandler FTP1CMD = new FTPNavigationHandler(FTP);
-        System.out.println(FTP1CMD.listCurrentFolder());
+        //System.out.println("Liste:\n" + FTP1CMD.listCurrentFolder());
 
+        
+        RemoteFile tester = new RemoteFile(FTP1CMD);
+        var elementlist = tester.list();
+        System.out.println("E2 Name: " + tester.getName());
         
         //FTP1CMD.cd("Test Directory/Hej/Med/Dig");
         //System.out.println(FTP1CMD.listCurrentFolder());

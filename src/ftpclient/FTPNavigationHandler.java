@@ -30,6 +30,18 @@ public class FTPNavigationHandler extends FTPSession {
         return list;
     }
     
+        public String listFolder(String path) throws IOException {
+        //Initialize passive data connection (for LIST)
+        var dataSocket = initDataConnection();
+        //List root folder
+        String response = send("LIST " + path);
+        String list = getTextFromDataStream(dataSocket);
+        
+        System.out.println(response);
+        
+        return list;
+    }
+    
     public final void cd(String folder) throws IOException {
         String currentDirectory = this.getCurrentFolder();
         switch (folder) {

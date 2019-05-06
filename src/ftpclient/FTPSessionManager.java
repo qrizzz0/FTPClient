@@ -25,9 +25,12 @@ public class FTPSessionManager {
     public void logIn(FTPSession session) throws IOException {
         String s1 = session.send("");
         System.out.println(s1);
-        s1 = session.send("USER " + username);
+        s1 = session.sendForceFeedback("USER " + username);
         System.out.println(s1);
-        s1 = session.send("PASS " + password);
+        s1 = session.sendForceFeedback("PASS " + password);
+        if (s1.contains("530 ")) {
+            throw new IOException();
+        }
         System.out.println(s1);
         sessionList.add(session);
     }
