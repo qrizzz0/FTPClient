@@ -2,6 +2,7 @@ package FTPGUI.ContextMenu;
 
 import FTPGUI.RemoteFile;
 import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 
 public class ContextMenuRight extends ContextMenu{
@@ -15,17 +16,20 @@ public class ContextMenuRight extends ContextMenu{
 
     @Override
     void makeDirMouseReleased(MouseEvent evt) {
-        System.out.println("Make dir!");
-        System.out.println(((RemoteFile)file).getPath());
-        try { ((RemoteFile)file).mkDir("TestFolder2"); }
-        catch (Exception ex) { ex.printStackTrace(); }
-        
-        
+        String folderName = JOptionPane.showInputDialog("Please enter a name for the folder:");
+        try {
+            if (folderName == null) throw new Exception();
+            ((RemoteFile)file).mkDir(folderName); 
+        } catch (Exception ex) { ex.printStackTrace(); }
     }
 
     @Override
     void makeFileMouseReleased(MouseEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String fileName = JOptionPane.showInputDialog("Please enter a name for the file:");
+        try { 
+            if (fileName == null) throw new Exception();
+            ((RemoteFile)file).mkFile(fileName); }
+        catch (Exception ex) { ex.printStackTrace(); }
     }
 
     @Override
@@ -36,12 +40,21 @@ public class ContextMenuRight extends ContextMenu{
 
     @Override
     void renameMouseReleased(MouseEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String newName = JOptionPane.showInputDialog("Please enter a new name:");
+        try { 
+            if (newName != null) ((RemoteFile)file).rename(newName); }
+        catch (Exception ex) { ex.printStackTrace(); }
     }
 
     @Override
     void deleteMouseReleased(MouseEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    int confirmdialog = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete" + ((RemoteFile)file).getName(),"Warning",JOptionPane.YES_NO_OPTION);
+    if(confirmdialog == JOptionPane.YES_OPTION){
+        try { ((RemoteFile)file).deleteMe(); }
+        catch (Exception ex) { ex.printStackTrace(); }
+    }
+    
+    
     }
     
 }

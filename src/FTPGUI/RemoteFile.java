@@ -80,8 +80,35 @@ public class RemoteFile {
         navigator.send("MKD " + path + dirName);
     }
     
+    public void mkFile(String fileName) throws IOException {
+        String path = this.path;
+        if (isFile()) {
+            path = this.path.replace(getName(), "");
+        }
+        elementsExplored = false;
+        
+        java.net.Socket socket = navigator.initDataConnection();
+        navigator.send("STOR " + path + fileName);
+        socket.getOutputStream().flush();
+        socket.close();
+    }
+    
+    public void rename(String newName) throws IOException {
+        navigator.send("RNFR " + path);
+        String path = this.path.replace(getName(), "");
+        navigator.send("RNTO " + path + newName);
+    }
+    
     public void setElementsExplored(boolean setTo) {
         elementsExplored = setTo;
+    }
+    
+    public void deleteMe() throws IOException{
+        if (isFile()) {
+            navigator.send("DELE " + path);
+        } else {
+            navigator.send("RMDA " + path);
+        }
     }
     
 }
