@@ -8,7 +8,6 @@ import ftpclient.FTPSessionManager;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class FTPMainGUI extends javax.swing.JFrame {
 
@@ -251,6 +250,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
             
                 var remoteTree = new RemoteTreeModel(FTPNav1);
                 jTreeRight.setModel(remoteTree);
+                
             } catch (IOException ex) {
                 ex.printStackTrace();
                 connect = false;
@@ -275,7 +275,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
            
             RemoteFile remoteFile = (RemoteFile) jTreeRight.getLastSelectedPathComponent();
             
-            ContextMenuRight menu = new ContextMenuRight(remoteFile);
+            ContextMenuRight menu = new ContextMenuRight(remoteFile, jTreeRight);
             menu.show(evt.getComponent(), evt.getX(), evt.getY());
             
         }

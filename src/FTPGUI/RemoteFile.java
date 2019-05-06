@@ -71,6 +71,17 @@ public class RemoteFile {
         return getName();
     }
     
+    public void mkDir(String dirName) throws IOException {
+        String path = this.path;
+        if (isFile()) {
+            path = this.path.replace(getName(), "");
+        }
+        elementsExplored = false;
+        navigator.send("MKD " + path + dirName);
+    }
     
+    public void setElementsExplored(boolean setTo) {
+        elementsExplored = setTo;
+    }
     
 }

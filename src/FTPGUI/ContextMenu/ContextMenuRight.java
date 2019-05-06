@@ -2,17 +2,25 @@ package FTPGUI.ContextMenu;
 
 import FTPGUI.RemoteFile;
 import java.awt.event.MouseEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.JTree;
 
 public class ContextMenuRight extends ContextMenu{
+    JTree remoteTree;
     
-    public ContextMenuRight(RemoteFile remoteFile) {
+    public ContextMenuRight(RemoteFile remoteFile, JTree remoteTree) {
         super(remoteFile);
+        file = remoteFile;
+        this.remoteTree = remoteTree;
     }
 
     @Override
     void makeDirMouseReleased(MouseEvent evt) {
         System.out.println("Make dir!");
+        System.out.println(((RemoteFile)file).getPath());
+        try { ((RemoteFile)file).mkDir("TestFolder2"); }
+        catch (Exception ex) { ex.printStackTrace(); }
+        
+        
     }
 
     @Override
@@ -22,7 +30,8 @@ public class ContextMenuRight extends ContextMenu{
 
     @Override
     void refreshMouseReleased(MouseEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ((RemoteFile)file).setElementsExplored(false);
+        remoteTree.updateUI();
     }
 
     @Override
