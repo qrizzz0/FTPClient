@@ -5,7 +5,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
-public abstract class ContextMenu extends JPopupMenu {
+public abstract class ContextMenuJTree extends JPopupMenu {
     protected JMenuItem makeDir = new JMenuItem("Create Directory...");
     protected JMenuItem makeFile = new JMenuItem("Create File...");
     protected JMenuItem refresh = new JMenuItem("Refresh");
@@ -14,14 +14,12 @@ public abstract class ContextMenu extends JPopupMenu {
     protected Object file;
     protected TreePath treePath;
     
-    public ContextMenu(Object file) {
+    public ContextMenuJTree() {
         add(makeDir);
         add(makeFile);
         add(refresh);
         add(rename);
         add(delete);
-        
-        
         //makeDir.setEnabled(false);
         
         System.out.println((RemoteFile)file);

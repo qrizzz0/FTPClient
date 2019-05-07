@@ -1,7 +1,7 @@
 package FTPGUI;
 
-import FTPGUI.ContextMenu.ContextMenu;
-import FTPGUI.ContextMenu.ContextMenuRight;
+import FTPGUI.ContextMenu.ContextMenuJTree;
+import FTPGUI.ContextMenu.ContextMenuJTreeRight;
 import ftpclient.FTPNavigationHandler;
 import ftpclient.FTPSession;
 import ftpclient.FTPSessionManager;
@@ -37,7 +37,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
         jScrollPaneTreeLeft = new javax.swing.JScrollPane();
         jTreeLeft = new javax.swing.JTree();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTreeRight = new FTPGUI.JTreeRemoteExpanded();
+        jTreeRight = new FTPGUI.JTreeRemote();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -269,10 +269,16 @@ public class FTPMainGUI extends javax.swing.JFrame {
             jTreeRight.setSelectionRow(selectedRow);
            
             var treePath = jTreeRight.getPathForRow(selectedRow);
+            if (treePath == null) {  
+                    if (jTreeRight.getPathForRow(0) == null) {
+                        //Vis ikke menu!
+                    } else {
+                        treePath = jTreeRight.getPathForRow(0);
+                    }
+            }
             
-            ContextMenuRight menu = new ContextMenuRight(treePath, jTreeRight);
+            ContextMenuJTreeRight menu = new ContextMenuJTreeRight(treePath, jTreeRight);
             menu.show(evt.getComponent(), evt.getX(), evt.getY());
-            
         }
     }//GEN-LAST:event_jTreeRightMouseReleased
 
@@ -323,6 +329,6 @@ public class FTPMainGUI extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldPort;
     private javax.swing.JTextField jTextFieldUser;
     private javax.swing.JTree jTreeLeft;
-    private FTPGUI.JTreeRemoteExpanded jTreeRight;
+    private FTPGUI.JTreeRemote jTreeRight;
     // End of variables declaration//GEN-END:variables
 }

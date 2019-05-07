@@ -13,10 +13,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
  *
  * @author Kristofer
  */
-public class ContextMenuLeft extends ContextMenu {
+public class ContextMenuJTreeLeft extends ContextMenuJTree {
 
-    public ContextMenuLeft(RemoteFile remoteFile) {
-        super(remoteFile);
+    public ContextMenuJTreeLeft(RemoteFile remoteFile) {
+        super();
     }
 
     @Override

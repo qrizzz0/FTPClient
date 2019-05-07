@@ -138,4 +138,8 @@ public class RemoteFile {
         return getName(); //JTree bruger toString til at fange navnet på et objekt..
     }
     
+    public boolean isRoot() {
+        return path.equals("/");
+    }
+    
 }

@@ -1,19 +1,28 @@
 package FTPGUI.ContextMenu;
 
-import FTPGUI.JTreeRemoteExpanded;
+import FTPGUI.JTreeRemote;
 import FTPGUI.RemoteFile;
 import java.awt.event.MouseEvent;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 
-public class ContextMenuRight extends ContextMenu{
-    JTreeRemoteExpanded jTree;
+public class ContextMenuJTreeRight extends ContextMenuJTree{
+    JTreeRemote jTree;
+    protected JMenuItem transfer = new JMenuItem("Download");
     
-    public ContextMenuRight(TreePath treePath, JTreeRemoteExpanded jTree) {
-        super(treePath.getLastPathComponent());
-        this.treePath = treePath;
+    
+    public ContextMenuJTreeRight(TreePath treePath, JTreeRemote jTree) {
+        super();
+        add(transfer, 0);
         this.jTree = jTree;
-        file = (RemoteFile)treePath.getLastPathComponent();
+        this.file = (RemoteFile)treePath.getLastPathComponent();
+        this.treePath = treePath;
+        
+        if (((RemoteFile)file).isRoot()) {
+            disableFileOptions();
+        } 
+        
     }
 
     @Override
@@ -36,7 +45,9 @@ public class ContextMenuRight extends ContextMenu{
 
     @Override
     void refreshMouseReleased(MouseEvent evt) {
-        ((RemoteFile)file).setElementsExplored(false);
+        if (file != null) {
+            ((RemoteFile)file).setElementsExplored(false);
+        }
         jTree.refreshTree();
     }
 
@@ -50,13 +61,17 @@ public class ContextMenuRight extends ContextMenu{
 
     @Override
     void deleteMouseReleased(MouseEvent evt) {
-    int confirmdialog = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete" + ((RemoteFile)file).getName(),"Warning",JOptionPane.YES_NO_OPTION);
-    if(confirmdialog == JOptionPane.YES_OPTION){
-        try { ((RemoteFile)file).deleteMe(); }
-        catch (Exception ex) { ex.printStackTrace(); }
+        int confirmdialog = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete" + ((RemoteFile)file).getName(),"Warning",JOptionPane.YES_NO_OPTION);
+        if(confirmdialog == JOptionPane.YES_OPTION){
+            try { ((RemoteFile)file).deleteMe(); }
+            catch (Exception ex) { ex.printStackTrace(); }
+        }
     }
     
-    
+    private void disableFileOptions() {
+            transfer.setEnabled(false);
+            rename.setEnabled(false);
+            delete.setEnabled(false);
     }
     
 }

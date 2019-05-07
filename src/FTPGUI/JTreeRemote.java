@@ -5,7 +5,7 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-public class JTreeRemoteExpanded extends JTree {
+public class JTreeRemote extends JTree {
     
     public void expandRemoteFilePath(TreePath path) {
         // Only expand if not leaf!
