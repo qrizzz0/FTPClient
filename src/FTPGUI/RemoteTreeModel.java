@@ -30,7 +30,7 @@ public class RemoteTreeModel implements TreeModel {
         } else if (index >= contents.length) {
             return -1;
         }
-        return new RemoteFile(navigator, ((RemoteFile)folder).getPath(), contents[index]);
+        return new RemoteFile(navigator, (RemoteFile)folder, contents[index]);
     }
 
     @Override

@@ -36,8 +36,8 @@ public class FTPMainGUI extends javax.swing.JFrame {
         jTextAreaConsole = new javax.swing.JTextArea();
         jScrollPaneTreeLeft = new javax.swing.JScrollPane();
         jTreeLeft = new javax.swing.JTree();
-        jScrollPaneTreeRight = new javax.swing.JScrollPane();
-        jTreeRight = new javax.swing.JTree();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTreeRight = new FTPGUI.JTreeRemoteExpanded();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -154,16 +154,13 @@ public class FTPMainGUI extends javax.swing.JFrame {
         });
         jScrollPaneTreeLeft.setViewportView(jTreeLeft);
 
-        jScrollPaneTreeRight.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
         jTreeRight.setModel(remoteTreeModel);
-        jTreeRight.setPreferredSize(null);
         jTreeRight.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jTreeRightMouseReleased(evt);
             }
         });
-        jScrollPaneTreeRight.setViewportView(jTreeRight);
+        jScrollPane1.setViewportView(jTreeRight);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -172,9 +169,9 @@ public class FTPMainGUI extends javax.swing.JFrame {
             .addComponent(jPanelConnect, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
             .addComponent(jScrollPaneConsole)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneTreeRight))
+                .addComponent(jScrollPane1))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,9 +181,9 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPaneConsole, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPaneTreeRight, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                     .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(219, 219, 219))
+                .addContainerGap(219, Short.MAX_VALUE))
         );
 
         pack();
@@ -246,10 +243,9 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 }
             
                 FTPSession FTPSession1 = new FTPSession(FTPLogin);
-                FTPNavigationHandler FTPNav1 = new FTPNavigationHandler(FTPLogin);
-            
-                var remoteTree = new RemoteTreeModel(FTPNav1);
-                jTreeRight.setModel(remoteTree);
+                
+                setRemoteTree(FTPLogin);
+                jTreeRight.setModel(remoteTreeModel);
                 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -271,11 +267,10 @@ public class FTPMainGUI extends javax.swing.JFrame {
         if (SwingUtilities.isRightMouseButton(evt)) {
             int selectedRow = jTreeRight.getRowForLocation(evt.getX(), evt.getY());
             jTreeRight.setSelectionRow(selectedRow);
-            System.out.println(selectedRow);
            
-            RemoteFile remoteFile = (RemoteFile) jTreeRight.getLastSelectedPathComponent();
+            var treePath = jTreeRight.getPathForRow(selectedRow);
             
-            ContextMenuRight menu = new ContextMenuRight(remoteFile, jTreeRight);
+            ContextMenuRight menu = new ContextMenuRight(treePath, jTreeRight);
             menu.show(evt.getComponent(), evt.getX(), evt.getY());
             
         }
@@ -320,14 +315,14 @@ public class FTPMainGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelUser;
     private javax.swing.JPanel jPanelConnect;
     private javax.swing.JPasswordField jPasswordField;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneConsole;
     private javax.swing.JScrollPane jScrollPaneTreeLeft;
-    private javax.swing.JScrollPane jScrollPaneTreeRight;
     private javax.swing.JTextArea jTextAreaConsole;
     private javax.swing.JTextField jTextFieldHost;
     private javax.swing.JTextField jTextFieldPort;
     private javax.swing.JTextField jTextFieldUser;
     private javax.swing.JTree jTreeLeft;
-    private javax.swing.JTree jTreeRight;
+    private FTPGUI.JTreeRemoteExpanded jTreeRight;
     // End of variables declaration//GEN-END:variables
 }

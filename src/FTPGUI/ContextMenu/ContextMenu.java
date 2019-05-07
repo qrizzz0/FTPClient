@@ -3,6 +3,7 @@ package FTPGUI.ContextMenu;
 import FTPGUI.RemoteFile;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.tree.TreePath;
 
 public abstract class ContextMenu extends JPopupMenu {
     protected JMenuItem makeDir = new JMenuItem("Create Directory...");
@@ -11,6 +12,7 @@ public abstract class ContextMenu extends JPopupMenu {
     protected JMenuItem rename = new JMenuItem("Rename...");
     protected JMenuItem delete = new JMenuItem("Delete");
     protected Object file;
+    protected TreePath treePath;
     
     public ContextMenu(Object file) {
         add(makeDir);
@@ -19,7 +21,10 @@ public abstract class ContextMenu extends JPopupMenu {
         add(rename);
         add(delete);
         
-        System.out.println(((RemoteFile)file).getPath());
+        
+        //makeDir.setEnabled(false);
+        
+        System.out.println((RemoteFile)file);
         
         makeDir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {

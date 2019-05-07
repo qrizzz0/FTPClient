@@ -1,17 +1,19 @@
 package FTPGUI.ContextMenu;
 
+import FTPGUI.JTreeRemoteExpanded;
 import FTPGUI.RemoteFile;
 import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
-import javax.swing.JTree;
+import javax.swing.tree.TreePath;
 
 public class ContextMenuRight extends ContextMenu{
-    JTree remoteTree;
+    JTreeRemoteExpanded jTree;
     
-    public ContextMenuRight(RemoteFile remoteFile, JTree remoteTree) {
-        super(remoteFile);
-        file = remoteFile;
-        this.remoteTree = remoteTree;
+    public ContextMenuRight(TreePath treePath, JTreeRemoteExpanded jTree) {
+        super(treePath.getLastPathComponent());
+        this.treePath = treePath;
+        this.jTree = jTree;
+        file = (RemoteFile)treePath.getLastPathComponent();
     }
 
     @Override
@@ -35,7 +37,7 @@ public class ContextMenuRight extends ContextMenu{
     @Override
     void refreshMouseReleased(MouseEvent evt) {
         ((RemoteFile)file).setElementsExplored(false);
-        remoteTree.updateUI();
+        jTree.refreshTree();
     }
 
     @Override
