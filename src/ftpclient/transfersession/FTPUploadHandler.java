@@ -4,7 +4,7 @@ import ftpclient.FTPSessionManager;
 import java.io.*;
 import java.net.Socket;
 
-public class FTPUploadHandler extends FTPTransferInterface implements Runnable {
+public class FTPUploadHandler extends FTPTransferSession implements Runnable {
     private File fileToUpload;
 
     public FTPUploadHandler(FTPSessionManager sessionManager, File fileToUpload) throws IOException {

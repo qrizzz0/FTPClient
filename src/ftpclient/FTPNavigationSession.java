@@ -4,17 +4,14 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 public class FTPNavigationSession extends FTPSession {
-    private final FTPSessionManager sessionManager;
     private String lastDirectory = "/";
     
     public FTPNavigationSession(FTPSessionManager sessionManager) throws IOException {
         super(sessionManager);
-        this.sessionManager = sessionManager;
     }
     
     public FTPNavigationSession(FTPSessionManager sessionManager, String startDirectory) throws IOException {
         super(sessionManager);
-        this.sessionManager = sessionManager;
         cd(startDirectory); 
     }
     
@@ -129,7 +126,7 @@ public class FTPNavigationSession extends FTPSession {
     }
     
     @Override
-    public void restartSession() throws IOException {
+    protected void restartSession() throws IOException {
         super.restartSession();
         cd(lastDirectory);
     }

@@ -5,7 +5,7 @@ import ftpclient.FTPSessionManager;
 import java.io.IOException;
 import java.net.Socket;
 
-public abstract class FTPTransferInterface extends FTPSession {
+public abstract class FTPTransferSession extends FTPSession {
     protected Socket dataSocket;
     protected String fileName;
     protected long processedBytes;
@@ -19,7 +19,7 @@ public abstract class FTPTransferInterface extends FTPSession {
     private long lastTime;
     private long lastProcessedBytes;
     
-    public FTPTransferInterface(FTPSessionManager sessionManager) throws IOException {
+    public FTPTransferSession(FTPSessionManager sessionManager) throws IOException {
         super(sessionManager);
     }
     

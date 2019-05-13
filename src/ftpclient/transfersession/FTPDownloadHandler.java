@@ -5,7 +5,7 @@ import java.io.*;
 import java.net.*;
 import java.util.StringTokenizer;
 
-public class FTPDownloadHandler extends FTPTransferInterface implements Runnable {
+public class FTPDownloadHandler extends FTPTransferSession implements Runnable {
     
     public FTPDownloadHandler(FTPSessionManager sessionManager, String fileName) throws IOException {
         super(sessionManager);

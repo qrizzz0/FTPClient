@@ -10,7 +10,7 @@ public class FTPSession {
     private PrintStream ud;
     private BufferedReader ind;
     private int pingTime = 20; //Vi tilføjer en smule delay til ping der giver serveren tid til at processere.
-    private final FTPSessionManager sessionManager;
+    protected final FTPSessionManager sessionManager;
 
     public FTPSession(FTPSessionManager sessionManager) throws IOException {
         this.sessionManager = sessionManager;
