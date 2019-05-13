@@ -48,14 +48,6 @@ public class FTPSessionManager {
         return port;
     }
     
-    public String getUsername() {
-        return hostname;
-    }
-    
-    public String getPassword() {
-        return hostname;
-    }
-    
     public FTPSession newSession() throws IOException {
         return new FTPSession(this);
     }
@@ -76,7 +68,7 @@ public class FTPSessionManager {
         String result = "";
         //for (FTPSession session : sessionList) { //En tråd kan tilføje/fjerne sig selv her mens det køres, det dræber foreach	
         for (int i = 1; i <= sessionList.size(); i++) {
-            result += i + ": " + sessionList.get(i-1).logString() + "\n";
+            result += i + ": " + sessionList.get(i-1).sessionString() + "\n";
         }   		
         return result;
     }

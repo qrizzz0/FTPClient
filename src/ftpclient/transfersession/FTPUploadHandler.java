@@ -72,8 +72,8 @@ public class FTPUploadHandler extends FTPTransferInterface implements Runnable {
     }
     
     @Override
-    public String logString() {
-        return "Upload: " + super.logString();
+    public String sessionString() {
+        return "Upload: " + super.sessionString();
     }
     
 }

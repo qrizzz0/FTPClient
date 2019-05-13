@@ -81,7 +81,7 @@ public class FTPSession {
         return response;
     }
 
-    public final Socket initDataConnection() throws IOException {
+    protected final Socket initDataConnection() throws IOException {
         
         boolean properResponse = false;
         StringTokenizer datasocket = null;
@@ -119,12 +119,12 @@ public class FTPSession {
         return new Socket(IP, dataport);
     }
     
-    public String getTextFromDataStream(Socket dataSocket) throws IOException {
+    public String getTextFromSocket(Socket dataSocket) throws IOException {
         BufferedReader textBuffer = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
         return readLines(textBuffer);
     }
     
-    public String forceResponse() throws IOException {
+    protected String forceResponse() throws IOException {
         String response = "";
         int retryCount = 1;
         while (response.isEmpty() && retryCount < 10) {
@@ -141,14 +141,14 @@ public class FTPSession {
         return response;
     }
     
-    public void closeSession() throws IOException {
+    protected void closeSession() throws IOException {
         ud.close();
         ind.close();
         socket.close();
         sessionManager.logOut(this);
     }
     
-    public void restartSession() throws IOException {
+    protected void restartSession() throws IOException {
         closeSession();
         initConnection();
     }
@@ -161,7 +161,7 @@ public class FTPSession {
         return alive;
     }
     
-    public String logString() {
+    public String sessionString() {
         return "Plain Session";
     }
 

@@ -23,7 +23,7 @@ public class FTPNavigationSession extends FTPSession {
         var dataSocket = initDataConnection();
         //List root folder
         String response = send("LIST");
-        String list = getTextFromDataStream(dataSocket);
+        String list = getTextFromSocket(dataSocket);
         
         System.out.println(response);
         
@@ -35,7 +35,7 @@ public class FTPNavigationSession extends FTPSession {
         var dataSocket = initDataConnection();
         //List root folder
         String response = send("LIST " + path);
-        String list = getTextFromDataStream(dataSocket);
+        String list = getTextFromSocket(dataSocket);
         
         System.out.println(response);
         
@@ -135,7 +135,7 @@ public class FTPNavigationSession extends FTPSession {
     }
     
     @Override
-    public String logString() {
+    public String sessionString() {
         try { 
             return "Navigation Session current folder: " + getCurrentFolder(); 
         } catch (IOException ex) {

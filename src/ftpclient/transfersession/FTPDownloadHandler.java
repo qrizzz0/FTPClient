@@ -77,8 +77,8 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
     }
     
     @Override
-    public String logString() {
-        return "Download: " + super.logString();
+    public String sessionString() {
+        return "Download: " + super.sessionString();
     }
     
 }

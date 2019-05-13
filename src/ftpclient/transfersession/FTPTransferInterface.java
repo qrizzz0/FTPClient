@@ -59,7 +59,7 @@ public abstract class FTPTransferInterface extends FTPSession {
     }
     
     @Override
-    public String logString() {
+    public String sessionString() {
         return
         fileName + "   -   " + processedBytes + "/" + size +
         "\tSpeed: " + speed + " Kb/s";
