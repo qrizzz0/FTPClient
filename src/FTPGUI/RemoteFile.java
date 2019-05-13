@@ -6,7 +6,7 @@ import java.io.IOException;
 public class RemoteFile {
     private FTPNavigationSession navigator;
     private String path = "/";
-    private String elementInfo = "d--------- 1 ftp ftp           0 Jan 01 00:00 /"; //If there is no new elementinfo we assume "/"
+    private String elementInfo = "d--------- 1 ftp ftp           0 Jan 01 00:00 /";  //If there is no new elementinfo we assume we are root.
     private String[] listElements = null;
     private RemoteFile parentFolder = null;
     private boolean elementsExplored = false;
@@ -70,32 +70,27 @@ public class RemoteFile {
     
     public void mkDir(String dirName) throws IOException {
         String path = this.path;
-        if (isFile()) {
+        if (this.isFile()) {
             path = this.path.replace(getName(), "");
+            setParentExploredStatus(false);
         }
-        elementsExplored = false;
-        navigator.send("MKD " + path + dirName);
-        setParentExploredStatus(false);
+        this.elementsExplored = false;
+        navigator.mkDir(path + dirName);
     }
     
     public void mkFile(String fileName) throws IOException {
         String path = this.path;
-        if (isFile()) {
+        if (this.isFile()) {
             path = this.path.replace(getName(), "");
+            setParentExploredStatus(false);
         }
-        elementsExplored = false;
-        
-        java.net.Socket socket = navigator.initDataConnection();
-        navigator.send("STOR " + path + fileName);
-        socket.getOutputStream().flush();
-        socket.close();
-        setParentExploredStatus(false);
+        this.elementsExplored = false;
+        navigator.mkFile(path + fileName);
     }
     
     public void rename(String newName) throws IOException {
-        navigator.send("RNFR " + path);
-        String path = this.path.replace(getName(), "");
-        navigator.send("RNTO " + path + newName);
+        String newPath = this.path.replace(getName(), newName);
+        navigator.renameItem(path, newPath);
         setParentExploredStatus(false);
     }
     
@@ -105,18 +100,15 @@ public class RemoteFile {
     
     public void deleteMe() throws IOException {
         if (isFile()) {
-            navigator.send("DELE " + this.path);
+            navigator.deleteFile(this.path);
         } else {
-            String s1 = navigator.send("RMDA " + path);
-            //Hvis serveren ikke understøtter RMDA, slet alle filer & mapper rekursivt..
-            if (s1.contains("500 ")) {
-                String[] contents = list();
-                for (String content : contents) {
-                    RemoteFile fileForDeletion = new RemoteFile(navigator, this, content);
-                    fileForDeletion.deleteMe();
-                }
-                navigator.send("RMD " + path);
+            //Slet mappe rekursivt!
+            String[] contents = list();
+            for (String content : contents) {
+                RemoteFile fileForDeletion = new RemoteFile(navigator, this, content);
+                fileForDeletion.deleteMe();
             }
+            navigator.deleteDirectory(this.path);
         }
         setParentExploredStatus(false);
     }

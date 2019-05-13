@@ -104,6 +104,30 @@ public class FTPNavigationSession extends FTPSession {
         return lastDirectory;
     }
     
+    public void mkFile(String path) throws IOException {
+        java.net.Socket socket = initDataConnection();
+        send("STOR " + path);
+        socket.getOutputStream().flush();
+        socket.close();
+    }
+    
+    public void mkDir(String path) throws IOException {
+        send("MKD " + path);
+    }
+    
+    public void renameItem(String path, String newPath) throws IOException {
+        send("RNFR " + path);
+        send("RNTO " + newPath);
+    }
+    
+    public void deleteFile(String path) throws IOException {
+        send("DELE " + path);
+    }
+    
+    public void deleteDirectory(String path) throws IOException {
+        send("RMD " + path);
+    }
+    
     @Override
     public void restartSession() throws IOException {
         super.restartSession();

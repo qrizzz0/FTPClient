@@ -22,7 +22,6 @@ public class FTPClient {
         
         FTPNavigationSession FTP1Nav = FTP.newNavigationSession();
 
-        
         RemoteFile tester = new RemoteFile(FTP1Nav);
         var elementlist = tester.list();
         System.out.println("E2 Name: " + tester.getName());

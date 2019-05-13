@@ -241,8 +241,6 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 } else {
                     FTPLogin = new FTPSessionManager(host, port, username, password);
                 }
-            
-                FTPSession FTPSession1 = new FTPSession(FTPLogin);
                 
                 setRemoteTree(FTPLogin);
                 jTreeRight.setModel(remoteTreeModel);
@@ -308,10 +306,8 @@ public class FTPMainGUI extends javax.swing.JFrame {
         });
     }
 
-    
     public void setRemoteTree(FTPSessionManager sessionManager) throws IOException {
-        FTPNavigationSession FTPNav1 = new FTPNavigationSession(sessionManager);
-        remoteTreeModel = new RemoteTreeModel(FTPNav1);
+        remoteTreeModel = new RemoteTreeModel(sessionManager.newNavigationSession());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
