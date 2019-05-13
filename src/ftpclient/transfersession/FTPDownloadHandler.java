@@ -18,13 +18,13 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
     @Override
     public void run() {
         try {
-        writeFileFromSocket(dataSocket, fileName);
+        writeFileFromSocket(fileName);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
     
-    private void writeFileFromSocket(Socket datasocket, String filename) throws IOException {
+    private void writeFileFromSocket(String filename) throws IOException {
         send("RETR " + fileName);
         InputStream dataStream = dataSocket.getInputStream();
         FileOutputStream fos = new FileOutputStream(filename);
@@ -36,6 +36,7 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
                 if (dataSocket.isClosed()) {
                     throw new IOException();
                 } else {
+                    //Hvis vi ikke har downloadet noget så vent og prøv igen..
                     try { Thread.sleep(5); } catch (InterruptedException ex) {}
                 }
             } else {           
@@ -48,12 +49,17 @@ public class FTPDownloadHandler extends FTPTransferInterface implements Runnable
             this.speedCalculator(bufferSize);
         }
         
+        closeUploadSocket(fos, dataStream);
+    }
+    
+    private void closeUploadSocket(FileOutputStream fos, InputStream dataStream) throws IOException {
         fos.flush();
         fos.close();
         dataStream.close();
         dataSocket.close();
         closeSession();
     }
+    
    
     private long requestSize() throws IOException {
         int retries = 0;

@@ -3,16 +3,16 @@ package ftpclient;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-public class FTPNavigationHandler extends FTPSession {
+public class FTPNavigationSession extends FTPSession {
     private final FTPSessionManager sessionManager;
     private String lastDirectory = "/";
     
-    public FTPNavigationHandler(FTPSessionManager sessionManager) throws IOException {
+    public FTPNavigationSession(FTPSessionManager sessionManager) throws IOException {
         super(sessionManager);
         this.sessionManager = sessionManager;
     }
     
-    public FTPNavigationHandler(FTPSessionManager sessionManager, String startDirectory) throws IOException {
+    public FTPNavigationSession(FTPSessionManager sessionManager, String startDirectory) throws IOException {
         super(sessionManager);
         this.sessionManager = sessionManager;
         cd(startDirectory); 

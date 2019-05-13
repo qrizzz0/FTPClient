@@ -1,26 +1,26 @@
 package FTPGUI;
 
-import ftpclient.FTPNavigationHandler;
+import ftpclient.FTPNavigationSession;
 import java.io.IOException;
 
 public class RemoteFile {
-    private FTPNavigationHandler navigator;
+    private FTPNavigationSession navigator;
     private String path = "/";
     private String elementInfo = "d--------- 1 ftp ftp           0 Jan 01 00:00 /"; //If there is no new elementinfo we assume "/"
     private String[] listElements = null;
     private RemoteFile parentFolder = null;
     private boolean elementsExplored = false;
     
-    public RemoteFile(FTPNavigationHandler navigator) {
+    public RemoteFile(FTPNavigationSession navigator) {
         this.navigator = navigator;
     }
     
-    public RemoteFile(FTPNavigationHandler navigator, String elementInfo) {
+    public RemoteFile(FTPNavigationSession navigator, String elementInfo) {
         this(navigator);
         this.elementInfo = elementInfo;
     }
     
-    public RemoteFile(FTPNavigationHandler navigator, RemoteFile parent, String elementInfo) {
+    public RemoteFile(FTPNavigationSession navigator, RemoteFile parent, String elementInfo) {
         this(navigator, elementInfo);
         this.parentFolder = parent;
         this.path = parent.getPath() + parseNameFromElement(elementInfo);
@@ -129,7 +129,7 @@ public class RemoteFile {
         parentFolder.setElementsExplored(setTo);
     }
     
-    public FTPNavigationHandler getNavigator() {
+    public FTPNavigationSession getNavigator() {
         return navigator;
     }
     

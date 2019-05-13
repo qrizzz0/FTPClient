@@ -1,6 +1,6 @@
 package FTPGUI;
 
-import ftpclient.FTPNavigationHandler;
+import ftpclient.FTPNavigationSession;
 import java.io.IOException;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -8,9 +8,9 @@ import javax.swing.tree.TreePath;
 
 public class RemoteTreeModel implements TreeModel {
     protected RemoteFile root;
-    private FTPNavigationHandler navigator;
+    private FTPNavigationSession navigator;
     
-    public RemoteTreeModel(FTPNavigationHandler navigator) {
+    public RemoteTreeModel(FTPNavigationSession navigator) {
         this.navigator = navigator;
         root = new RemoteFile(navigator);
     }

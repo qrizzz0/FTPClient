@@ -1,5 +1,6 @@
 package ftpclient;
 
+import ftpclient.transfersession.FTPDownloadHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -53,6 +54,22 @@ public class FTPSessionManager {
     
     public String getPassword() {
         return hostname;
+    }
+    
+    public FTPSession newSession() throws IOException {
+        return new FTPSession(this);
+    }
+    
+    public FTPNavigationSession newNavigationSession() throws IOException {
+        return new FTPNavigationSession(this);
+    }
+        
+    public FTPDownloadHandler newDownloadSession(String file, String destination) throws IOException {
+        return new FTPDownloadHandler(this, file);
+    }
+    
+    public FTPDownloadHandler newUploadSession(String file, String destination) throws IOException {
+        return new FTPDownloadHandler(this, destination);
     }
     
     public String sessionInfo() {

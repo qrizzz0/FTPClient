@@ -2,7 +2,7 @@ package FTPGUI;
 
 import FTPGUI.ContextMenu.ContextMenuJTree;
 import FTPGUI.ContextMenu.ContextMenuJTreeRight;
-import ftpclient.FTPNavigationHandler;
+import ftpclient.FTPNavigationSession;
 import ftpclient.FTPSession;
 import ftpclient.FTPSessionManager;
 import java.io.IOException;
@@ -310,7 +310,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
 
     
     public void setRemoteTree(FTPSessionManager sessionManager) throws IOException {
-        FTPNavigationHandler FTPNav1 = new FTPNavigationHandler(sessionManager);
+        FTPNavigationSession FTPNav1 = new FTPNavigationSession(sessionManager);
         remoteTreeModel = new RemoteTreeModel(FTPNav1);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
