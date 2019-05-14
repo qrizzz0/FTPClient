@@ -1,6 +1,7 @@
 package FTPGUI.ContextMenu;
 
 import FTPGUI.RemoteFile;
+import FTPGUI.TransferHandler;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
@@ -13,6 +14,7 @@ public abstract class ContextMenuJTree extends JPopupMenu {
     protected JMenuItem delete = new JMenuItem("Delete");
     protected Object file;
     protected TreePath treePath;
+    protected TransferHandler transferHandler;
     
     public ContextMenuJTree() {
         add(makeDir);

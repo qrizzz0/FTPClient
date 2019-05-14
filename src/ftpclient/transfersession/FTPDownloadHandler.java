@@ -2,17 +2,21 @@ package ftpclient.transfersession;
 
 import ftpclient.FTPSessionManager;
 import java.io.*;
-import java.net.*;
 import java.util.StringTokenizer;
 
 public class FTPDownloadHandler extends FTPTransferSession implements Runnable {
+    private String destination = "";
     
-    public FTPDownloadHandler(FTPSessionManager sessionManager, String fileName) throws IOException {
+    public FTPDownloadHandler(FTPSessionManager sessionManager, String filePath) throws IOException {
         super(sessionManager);
-        this.fileName = fileName;
+        this.fileName = filePath;
         this.size = requestSize();
         this.dataSocket = initDataConnection();
-        new Thread(this).start();
+    }
+    
+    public FTPDownloadHandler(FTPSessionManager sessionManager, String filePath, String destination) throws IOException {
+        this(sessionManager, filePath);
+        this.destination = destination + trimPathToFileName(fileName);
     }
     
     @Override
@@ -24,10 +28,11 @@ public class FTPDownloadHandler extends FTPTransferSession implements Runnable {
         }
     }
     
-    private void writeFileFromSocket(String filename) throws IOException {
+    private void writeFileFromSocket(String fileName) throws IOException {
         send("RETR " + fileName);
         InputStream dataStream = dataSocket.getInputStream();
-        FileOutputStream fos = new FileOutputStream(filename);
+        System.out.println("Destination: " + destination);
+        FileOutputStream fos = new FileOutputStream(destination);
         byte[] buffer = new byte[bufferSize];
         
         while (!this.finished) {
@@ -79,6 +84,11 @@ public class FTPDownloadHandler extends FTPTransferSession implements Runnable {
     @Override
     public String sessionString() {
         return "Download: " + super.sessionString();
+    }
+
+    private String trimPathToFileName(String filePath) {
+        String[] brokenUpPath = filePath.split("/");
+        return brokenUpPath[brokenUpPath.length - 1];
     }
     
 }

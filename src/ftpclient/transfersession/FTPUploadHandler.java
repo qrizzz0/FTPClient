@@ -6,6 +6,7 @@ import java.net.Socket;
 
 public class FTPUploadHandler extends FTPTransferSession implements Runnable {
     private File fileToUpload;
+    private String destination = "/";
 
     public FTPUploadHandler(FTPSessionManager sessionManager, File fileToUpload) throws IOException {
         super(sessionManager);
@@ -13,11 +14,15 @@ public class FTPUploadHandler extends FTPTransferSession implements Runnable {
         this.dataSocket = initDataConnection();
         this.size = fileToUpload.length();
         this.fileName = fileToUpload.getName();
-        new Thread(this).start();
     }
 
     public FTPUploadHandler(FTPSessionManager sessionManager, String filePath) throws IOException {
         this(sessionManager, new File(filePath));
+    }
+    
+    public FTPUploadHandler(FTPSessionManager sessionManager, String filePath, String destination) throws IOException {
+        this(sessionManager, new File(filePath));
+        this.destination = destination;
     }
     
     @Override
@@ -31,7 +36,7 @@ public class FTPUploadHandler extends FTPTransferSession implements Runnable {
     }
 
     private void uploadFromFile(File file) throws IOException {
-        send("STOR " + fileName);
+        send("STOR " + destination + fileName);
         OutputStream outStream = dataSocket.getOutputStream();
         BufferedOutputStream dataStream = new BufferedOutputStream(outStream);
         InputStream fileStream = null;
@@ -47,17 +52,11 @@ public class FTPUploadHandler extends FTPTransferSession implements Runnable {
             
         while (!finished) {
             int uploaded = fileStream.read(uploadBuffer);
-            if (uploaded <= 0) {
-                if (dataSocket.isClosed()) {
-                    throw new IOException();
-                } else {
-                    //Hvis vi ikke har uploadet noget så vent og prøv igen..
-                    try { Thread.sleep(5); } catch (InterruptedException ex) {}
-                }
-            } else {    
-                dataStream.write(uploadBuffer, 0, uploaded);
-                this.processedBytes += uploaded;
-            }
+              
+            dataStream.write(uploadBuffer, 0, uploaded);
+            dataStream.flush();
+            this.processedBytes += uploaded;
+            
             this.finished = this.size == this.processedBytes;
             speedCalculator(bufferSize);
         }

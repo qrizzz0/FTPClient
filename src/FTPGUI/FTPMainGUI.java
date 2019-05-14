@@ -1,6 +1,7 @@
 package FTPGUI;
 
 import FTPGUI.ContextMenu.ContextMenuJTree;
+import FTPGUI.ContextMenu.ContextMenuJTreeLeft;
 import FTPGUI.ContextMenu.ContextMenuJTreeRight;
 import ftpclient.FTPNavigationSession;
 import ftpclient.FTPSession;
@@ -13,6 +14,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
 
     private LocalTreeModel localFileTree = new LocalTreeModel();
     private RemoteTreeModel remoteTreeModel;
+    private TransferHandler transferHandler;
 
     public FTPMainGUI() {
         initComponents();
@@ -38,6 +40,9 @@ public class FTPMainGUI extends javax.swing.JFrame {
         jTreeLeft = new javax.swing.JTree();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeRight = new FTPGUI.JTreeRemote();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPaneConsole1 = new javax.swing.JScrollPane();
+        jTextAreaConsole1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -162,6 +167,18 @@ public class FTPMainGUI extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTreeRight);
 
+        jLabel1.setText("Current Sessions:");
+
+        jScrollPaneConsole1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPaneConsole1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        jTextAreaConsole1.setColumns(20);
+        jTextAreaConsole1.setFont(new java.awt.Font("Times New Roman", 0, 10)); // NOI18N
+        jTextAreaConsole1.setRows(5);
+        jTextAreaConsole1.setAlignmentX(0.0F);
+        jTextAreaConsole1.setAlignmentY(0.0F);
+        jScrollPaneConsole1.setViewportView(jTextAreaConsole1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -172,6 +189,11 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPaneConsole1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,7 +205,10 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                     .addComponent(jScrollPaneTreeLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(219, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPaneConsole1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -244,6 +269,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 
                 setRemoteTree(FTPLogin);
                 jTreeRight.setModel(remoteTreeModel);
+                this.transferHandler = new TransferHandler(FTPLogin, jTreeLeft, jTreeRight);
                 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -257,7 +283,18 @@ public class FTPMainGUI extends javax.swing.JFrame {
             System.out.println("Right Mouse pressed on left tree!");
             int selectedRow = jTreeLeft.getRowForLocation(evt.getX(), evt.getY());
             jTreeLeft.setSelectionRow(selectedRow);
-            System.out.println(selectedRow);
+            
+            var treePath = jTreeLeft.getPathForRow(selectedRow);
+            if (treePath == null) {  
+                    if (jTreeLeft.getPathForRow(0) == null) {
+                        //Vis ikke menu!
+                    } else {
+                        treePath = jTreeLeft.getPathForRow(0);
+                    }
+            }
+            
+            ContextMenuJTreeLeft menu = new ContextMenuJTreeLeft(treePath, jTreeLeft, transferHandler);
+            menu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_jTreeLeftMouseReleased
 
@@ -275,7 +312,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
                     }
             }
             
-            ContextMenuJTreeRight menu = new ContextMenuJTreeRight(treePath, jTreeRight);
+            ContextMenuJTreeRight menu = new ContextMenuJTreeRight(treePath, jTreeRight, transferHandler);
             menu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_jTreeRightMouseReleased
@@ -311,6 +348,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelHost;
     private javax.swing.JLabel jLabelPassword;
     private javax.swing.JLabel jLabelPort;
@@ -319,8 +357,10 @@ public class FTPMainGUI extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneConsole;
+    private javax.swing.JScrollPane jScrollPaneConsole1;
     private javax.swing.JScrollPane jScrollPaneTreeLeft;
     private javax.swing.JTextArea jTextAreaConsole;
+    private javax.swing.JTextArea jTextAreaConsole1;
     private javax.swing.JTextField jTextFieldHost;
     private javax.swing.JTextField jTextFieldPort;
     private javax.swing.JTextField jTextFieldUser;

@@ -1,6 +1,7 @@
 package ftpclient;
 
 import ftpclient.transfersession.FTPDownloadHandler;
+import ftpclient.transfersession.FTPUploadHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -56,12 +57,19 @@ public class FTPSessionManager {
         return new FTPNavigationSession(this);
     }
         
-    public FTPDownloadHandler newDownloadSession(String file, String destination) throws IOException {
-        return new FTPDownloadHandler(this, file);
+    public FTPDownloadHandler newDownloadSession(String path, String destination) throws IOException {
+        var downloadSession = new FTPDownloadHandler(this, path, destination);
+        return downloadSession;
     }
     
-    public FTPDownloadHandler newUploadSession(String file, String destination) throws IOException {
-        return new FTPDownloadHandler(this, destination);
+    public FTPUploadHandler newUploadSession(String file, String destination) throws IOException {
+        FTPUploadHandler uploadSession;
+        if (destination == null) {
+            uploadSession = new FTPUploadHandler(this, file);
+        } else {
+            return new FTPUploadHandler(this, file, destination);
+        }
+        return uploadSession;
     }
     
     public String sessionInfo() {

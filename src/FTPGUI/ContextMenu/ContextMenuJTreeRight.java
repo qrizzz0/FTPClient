@@ -2,6 +2,7 @@ package FTPGUI.ContextMenu;
 
 import FTPGUI.JTreeRemote;
 import FTPGUI.RemoteFile;
+import FTPGUI.TransferHandler;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -12,21 +13,34 @@ public class ContextMenuJTreeRight extends ContextMenuJTree{
     protected JMenuItem transfer = new JMenuItem("Download");
     
     
-    public ContextMenuJTreeRight(TreePath treePath, JTreeRemote jTree) {
+    public ContextMenuJTreeRight(TreePath treePath, JTreeRemote jTree, TransferHandler transferHandler) {
         super();
         add(transfer, 0);
         this.jTree = jTree;
         this.file = (RemoteFile)treePath.getLastPathComponent();
         this.treePath = treePath;
+        this.transferHandler = transferHandler;
         
         if (((RemoteFile)file).isRoot()) {
             disableFileOptions();
         } 
         
+        transfer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                transferMouseReleased(evt);
+            }
+        });
+        
     }
 
+    public void transferMouseReleased(MouseEvent evt) {
+        try {
+            transferHandler.startDownload(((RemoteFile)file)); 
+        } catch (Exception ex) { ex.printStackTrace(); }
+    }
+            
     @Override
-    void makeDirMouseReleased(MouseEvent evt) {
+    public void makeDirMouseReleased(MouseEvent evt) {
         String folderName = JOptionPane.showInputDialog("Please enter a name for the folder:");
         try {
             if (folderName == null) throw new Exception();
@@ -35,7 +49,7 @@ public class ContextMenuJTreeRight extends ContextMenuJTree{
     }
 
     @Override
-    void makeFileMouseReleased(MouseEvent evt) {
+    public void makeFileMouseReleased(MouseEvent evt) {
         String fileName = JOptionPane.showInputDialog("Please enter a name for the file:");
         try { 
             if (fileName == null) throw new Exception();
@@ -44,7 +58,7 @@ public class ContextMenuJTreeRight extends ContextMenuJTree{
     }
 
     @Override
-    void refreshMouseReleased(MouseEvent evt) {
+    public void refreshMouseReleased(MouseEvent evt) {
         if (file != null) {
             ((RemoteFile)file).setElementsExplored(false);
         }
@@ -52,7 +66,7 @@ public class ContextMenuJTreeRight extends ContextMenuJTree{
     }
 
     @Override
-    void renameMouseReleased(MouseEvent evt) {
+    public void renameMouseReleased(MouseEvent evt) {
         String newName = JOptionPane.showInputDialog("Please enter a new name:");
         try { 
             if (newName != null) ((RemoteFile)file).rename(newName); }
@@ -60,7 +74,7 @@ public class ContextMenuJTreeRight extends ContextMenuJTree{
     }
 
     @Override
-    void deleteMouseReleased(MouseEvent evt) {
+    public void deleteMouseReleased(MouseEvent evt) {
         int confirmdialog = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete" + ((RemoteFile)file).getName(),"Warning",JOptionPane.YES_NO_OPTION);
         if(confirmdialog == JOptionPane.YES_OPTION){
             try { ((RemoteFile)file).deleteMe(); }
