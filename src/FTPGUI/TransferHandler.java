@@ -5,9 +5,9 @@ import java.io.File;
 import javax.swing.JTree;
 
 public class TransferHandler {
-    FTPSessionManager sessionManager;
-    JTree jTreeRight;
-    JTree jTreeLeft;
+    private FTPSessionManager sessionManager;
+    private JTree jTreeRight;
+    private JTree jTreeLeft;
     
     public TransferHandler(FTPSessionManager sessionManager, JTree jTreeLeft, JTree jTreeRight) {
         this.sessionManager = sessionManager;
