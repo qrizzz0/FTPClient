@@ -1,10 +1,7 @@
 package FTPGUI;
 
-import FTPGUI.ContextMenu.ContextMenuJTree;
 import FTPGUI.ContextMenu.ContextMenuJTreeLeft;
 import FTPGUI.ContextMenu.ContextMenuJTreeRight;
-import ftpclient.FTPNavigationSession;
-import ftpclient.FTPSession;
 import ftpclient.FTPSessionManager;
 import java.io.IOException;
 import javax.swing.JOptionPane;
@@ -24,6 +21,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanelConnect = new javax.swing.JPanel();
         jLabelHost = new javax.swing.JLabel();
         jTextFieldHost = new javax.swing.JTextField();
@@ -33,7 +31,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
         jPasswordField = new javax.swing.JPasswordField();
         jLabelPort = new javax.swing.JLabel();
         jTextFieldPort = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButtonConnect = new javax.swing.JButton();
         jScrollPaneConsole = new javax.swing.JScrollPane();
         jTextAreaConsole = new javax.swing.JTextArea();
         jScrollPaneTreeLeft = new javax.swing.JScrollPane();
@@ -78,10 +76,10 @@ public class FTPMainGUI extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Connect");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButtonConnect.setText("Connect");
+        jButtonConnect.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                jButtonConnectMouseClicked(evt);
             }
         });
 
@@ -107,7 +105,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 88, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(jButtonConnect)
                 .addContainerGap())
         );
         jPanelConnectLayout.setVerticalGroup(
@@ -115,7 +113,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
             .addGroup(jPanelConnectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jLabelPort)
                 .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton1)
+                .addComponent(jButtonConnect)
                 .addComponent(jPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanelConnectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jTextFieldHost, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,7 +177,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
         jScrollPaneSessions.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         jTextAreaSessions.setColumns(20);
-        jTextAreaSessions.setFont(new java.awt.Font("Times New Roman", 0, 10)); // NOI18N
+        jTextAreaSessions.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         jTextAreaSessions.setRows(5);
         jTextAreaSessions.setAlignmentX(0.0F);
         jTextAreaSessions.setAlignmentY(0.0F);
@@ -240,7 +238,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jScrollPaneTreeLeftMouseClicked
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void jButtonConnectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonConnectMouseClicked
         boolean connect = true;
         String host = jTextFieldHost.getText();
         int port = 21;
@@ -284,7 +282,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
                 connect = false;
             }
         }
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_jButtonConnectMouseClicked
 
     private void jTreeLeftMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeLeftMouseReleased
         if (SwingUtilities.isRightMouseButton(evt)) {
@@ -328,13 +326,13 @@ public class FTPMainGUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jTextAreaConsoleComponentAdded
 
-    public void startConsoleUpdater(FTPSessionManager sessionManager) {
+    private void startConsoleUpdater(FTPSessionManager mgr) {
         Thread consoleUpdater = new Thread() {
             public void run() {
                 try { Thread.sleep(25); } catch (Exception ex) {}
                 while (1 != 2) { //Kør for evigt..
-                    if (sessionManager.messageExists()) {
-                        jTextAreaConsole.append(sessionManager.getBufferMessages());
+                    if (mgr.messageExists()) {
+                        jTextAreaConsole.append(mgr.getBufferMessages());
                         jTextAreaConsole.revalidate();
                         jTextAreaConsole.setCaretPosition(jTextAreaConsole.getDocument().getLength() - 1);
                     }
@@ -345,7 +343,7 @@ public class FTPMainGUI extends javax.swing.JFrame {
         Thread sessionUpdater = new Thread() {
             public void run() {
                 while (1 != 2) { //Kør for evigt..
-                    jTextAreaSessions.setText(sessionManager.sessionInfo());
+                    jTextAreaSessions.setText(mgr.sessionInfo());
                     jTextAreaSessions.revalidate();
                     try { Thread.sleep(250); } catch (Exception ex) {}
                 }
@@ -382,11 +380,12 @@ public class FTPMainGUI extends javax.swing.JFrame {
         });
     }
 
-    public void setRemoteTree(FTPSessionManager sessionManager) throws IOException {
-        remoteTreeModel = new RemoteTreeModel(sessionManager.newNavigationSession());
+    private void setRemoteTree(FTPSessionManager mgr) throws IOException {
+        remoteTreeModel = new RemoteTreeModel(mgr.newNavigationSession());
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButtonConnect;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelHost;
     private javax.swing.JLabel jLabelPassword;

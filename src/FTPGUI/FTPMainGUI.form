@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.9" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
+  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -100,7 +104,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jTextFieldPort" min="-2" pref="50" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="88" max="32767" attributes="0"/>
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonConnect" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -110,7 +114,7 @@
               <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                   <Component id="jLabelPort" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jTextFieldPort" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonConnect" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jPasswordField" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -161,12 +165,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextFieldPortActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="jButtonConnect">
           <Properties>
             <Property name="text" type="java.lang.String" value="Connect"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton1MouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonConnectMouseClicked"/>
           </Events>
         </Component>
       </SubComponents>
@@ -277,7 +281,7 @@
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Times New Roman" size="10" style="0"/>
+              <Font name="Times New Roman" size="14" style="0"/>
             </Property>
             <Property name="rows" type="int" value="5"/>
             <Property name="alignmentX" type="float" value="0.0"/>
