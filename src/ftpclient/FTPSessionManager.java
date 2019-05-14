@@ -11,6 +11,7 @@ public class FTPSessionManager {
     private String username;
     private String password;
     private ArrayList<FTPSession> sessionList;
+    private ConsoleBuffer consoleBuffer = new ConsoleBuffer();
     
     public FTPSessionManager(String hostname, int port, String username, String password) {
         this.hostname = hostname;
@@ -26,14 +27,14 @@ public class FTPSessionManager {
     
     public void logIn(FTPSession session) throws IOException {
         String s1 = session.send("");
-        System.out.println(s1);
+        buffer_println(s1);
         s1 = session.sendForceFeedback("USER " + username);
-        System.out.println(s1);
+        buffer_println(s1);
         s1 = session.sendForceFeedback("PASS " + password);
         if (s1.contains("530 ")) {
             throw new IOException();
         }
-        System.out.println(s1);
+        buffer_println(s1);
         sessionList.add(session);
     }
     
@@ -81,4 +82,15 @@ public class FTPSessionManager {
         return result;
     }
     
+    public void buffer_println(String message) {
+        consoleBuffer.println(message);
+    }
+    
+    public String getBufferMessages() {
+        return consoleBuffer.getBuffer();
+    }
+    
+    public boolean messageExists() {
+        return consoleBuffer.messageInBuffer();
+    }
 }

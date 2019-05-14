@@ -37,12 +37,13 @@ public class FTPUploadHandler extends FTPTransferSession implements Runnable {
 
     private void uploadFromFile(File file) throws IOException {
         send("STOR " + destination + fileName);
+        sessionManager.buffer_println("Starting upload: " + fileName + " Destination: " + destination);
         OutputStream outStream = dataSocket.getOutputStream();
         BufferedOutputStream dataStream = new BufferedOutputStream(outStream);
         InputStream fileStream = null;
         try { fileStream = new FileInputStream(file); }
         catch (FileNotFoundException ex) { 
-            System.out.println("File to upload not found! Cleaning up.");
+            sessionManager.buffer_println("File to upload not found! Cleaning up.");
             closeUploadSocket(dataStream, dataSocket);
             send("DELE " + fileName);
             throw new IOException();

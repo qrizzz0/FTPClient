@@ -30,8 +30,8 @@ public class FTPDownloadHandler extends FTPTransferSession implements Runnable {
     
     private void writeFileFromSocket(String fileName) throws IOException {
         send("RETR " + fileName);
+        sessionManager.buffer_println("Starting download: " + fileName + " Destination: " + destination);
         InputStream dataStream = dataSocket.getInputStream();
-        System.out.println("Destination: " + destination);
         FileOutputStream fos = new FileOutputStream(destination);
         byte[] buffer = new byte[bufferSize];
         

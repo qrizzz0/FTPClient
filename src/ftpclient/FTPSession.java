@@ -66,7 +66,7 @@ public class FTPSession {
     }
     
     public final String send(String message) throws IOException {
-        System.out.println("Send: \"" + message + "\"");
+        //sessionManager.buffer_println("Send: \"" + message + "\"");
         ud.println(message);
         ud.flush();
         return readLines(ind);
@@ -92,15 +92,15 @@ public class FTPSession {
             //Tokenize result and throw exception if not a proper data port
             datasocket = new StringTokenizer(response, "(,)");
             if (datasocket.countTokens() < 7) {
-                System.out.println("Something went wrong with the datastream!");
-                System.out.println("PASV gave response: " + response);
+                sessionManager.buffer_println("Something went wrong with the datastream!");
+                sessionManager.buffer_println("PASV gave response: " + response);
                 if (retryCount <= 5) {
-                    System.out.println("Clearing text from console and retrying.. Try: " + retryCount + "/5");
+                    sessionManager.buffer_println("Clearing text from console and retrying.. Try: " + retryCount + "/5");
                     try { Thread.sleep(500); } catch (InterruptedException ex) {}
                     this.getAvailableText();
                     retryCount++;
                 } else {
-                    System.out.println("Retries failed! Aborting with exception!");
+                    sessionManager.buffer_println("Retries failed! Aborting with exception!");
                     throw new IOException();
                 }
             } else {
@@ -114,7 +114,7 @@ public class FTPSession {
         //Next 2 is the passive port
         int dataport = (Integer.parseInt(datasocket.nextToken()) * 256) + Integer.parseInt(datasocket.nextToken());
         
-        System.out.println("Datastream on port: " + dataport);
+        sessionManager.buffer_println("Datastream on port: " + dataport);
         
         return new Socket(IP, dataport);
     }
@@ -130,11 +130,11 @@ public class FTPSession {
         while (response.isEmpty() && retryCount < 10) {
             try { Thread.sleep(500); } catch (InterruptedException ex) {}
             response = readLines(ind);
-            System.out.println("Server not responding.. Retying: " + retryCount + "/10");
+            sessionManager.buffer_println("Server not responding.. Retying: " + retryCount + "/10");
             retryCount++;
         }
         if (response.isEmpty()) {
-            System.out.println("Forced response never came back. Killing session!");
+            sessionManager.buffer_println("Forced response never came back. Killing session!");
             throw new IOException();
         }
         

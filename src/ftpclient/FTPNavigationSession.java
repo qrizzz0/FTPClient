@@ -22,7 +22,7 @@ public class FTPNavigationSession extends FTPSession {
         String response = send("LIST");
         String list = getTextFromSocket(dataSocket);
         
-        System.out.println(response);
+        sessionManager.buffer_println(response);
         
         return list;
     }
@@ -34,13 +34,14 @@ public class FTPNavigationSession extends FTPSession {
         String response = send("LIST " + path);
         String list = getTextFromSocket(dataSocket);
         
-        System.out.println(response);
+        sessionManager.buffer_println(response);
         
         return list;
     }
     
     public final void cd(String folder) throws IOException {
         String currentDirectory = this.getCurrentFolder();
+        sessionManager.buffer_println("Switching to folder: " + folder);
         switch (folder) {
             case "..":
                 if (currentDirectory.equals("/")) {
@@ -58,7 +59,7 @@ public class FTPNavigationSession extends FTPSession {
                     }   
                 }
                 send("CWD \"" + previousFolder + "\"");
-                System.out.println(getAvailableText());
+                sessionManager.buffer_println(getAvailableText());
                 lastDirectory = previousFolder;
                 break;
             case ".":
@@ -66,7 +67,7 @@ public class FTPNavigationSession extends FTPSession {
                 break;
             default:
                 send("CWD \"" + folder + "\"");
-                System.out.println(getAvailableText());
+                sessionManager.buffer_println(getAvailableText());
                 lastDirectory = folder;
                 break;
         }
@@ -83,12 +84,12 @@ public class FTPNavigationSession extends FTPSession {
         StringTokenizer directoryTrim = new StringTokenizer(response, "\"");
         if (directoryTrim.countTokens() < 3) {
             if (response.contains("421 ")) {
-                System.out.println("Control connection for navigator closed - restarting session!");
+                sessionManager.buffer_println("Control connection for navigator closed - restarting session!");
                 restartSession();
                 return getCurrentFolder();
             } else {
-            System.out.println("Something went wrong with the datastream!");
-            System.out.println("PWD gave response: " + response);
+            sessionManager.buffer_println("Something went wrong with the datastream!");
+            sessionManager.buffer_println("PWD gave response: " + response);
             closeSession();
             return null;
             }
@@ -133,10 +134,6 @@ public class FTPNavigationSession extends FTPSession {
     
     @Override
     public String sessionString() {
-        try { 
-            return "Navigation Session current folder: " + getCurrentFolder(); 
-        } catch (IOException ex) {
-            return "Session dead";
-        }
+            return "Navigation Session last directory: " + lastDirectory; 
     }
 }
