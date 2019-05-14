@@ -34,7 +34,9 @@ public class ContextMenuJTreeLeft extends ContextMenuJTree {
         
         transfer.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                transferMouseReleased(evt);
+                if (transfer.isEnabled()) {
+                    transferMouseReleased(evt);
+                }
             }
         });
 

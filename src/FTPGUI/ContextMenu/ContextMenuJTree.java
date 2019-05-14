@@ -24,35 +24,43 @@ public abstract class ContextMenuJTree extends JPopupMenu {
         add(delete);
         //makeDir.setEnabled(false);
         
-        System.out.println((RemoteFile)file);
-        
         makeDir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                makeDirMouseReleased(evt);
+                if (makeDir.isEnabled()) {
+                    makeDirMouseReleased(evt);
+                }
             }
         });
         
         makeFile.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                makeFileMouseReleased(evt);
+                if (makeFile.isEnabled()) {
+                    makeFileMouseReleased(evt);
+                }
             }
         });
         
         refresh.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                refreshMouseReleased(evt);
+                if (refresh.isEnabled()) {
+                    refreshMouseReleased(evt);
+                }
             }
         });
         
         rename.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                renameMouseReleased(evt);
+                if (rename.isEnabled()) {
+                    renameMouseReleased(evt);
+                }
             }
         });
         
         delete.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                deleteMouseReleased(evt);
+                if (delete.isEnabled()) {
+                    deleteMouseReleased(evt);
+                }
             }
         });
         

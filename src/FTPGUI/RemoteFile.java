@@ -39,7 +39,7 @@ public class RemoteFile {
             
             listElements = list.split("\r\n");
             for (int i = 0; i < listElements.length; i++) {
-                System.out.println(listElements[i]);
+                //System.out.println(listElements[i]);
             }
         }
 

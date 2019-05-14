@@ -29,7 +29,7 @@ public class JTreeRemote extends JTree {
         ArrayList<TreePath> expanded = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             if (isExpanded(i)) {
-                System.out.println("Adding to arraylist!");
+                //System.out.println("Adding to arraylist!");
                 expanded.add(getPathForRow(i));
             }
         }

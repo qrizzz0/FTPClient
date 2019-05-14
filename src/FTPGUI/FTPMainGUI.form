@@ -44,7 +44,7 @@
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
-          <Component id="jScrollPaneConsole1" alignment="0" max="32767" attributes="0"/>
+          <Component id="jScrollPaneSessions" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -61,7 +61,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="jScrollPaneConsole1" min="-2" pref="201" max="-2" attributes="0"/>
+              <Component id="jScrollPaneSessions" min="-2" pref="201" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -175,6 +175,7 @@
       <Properties>
         <Property name="horizontalScrollBarPolicy" type="int" value="31"/>
         <Property name="verticalScrollBarPolicy" type="int" value="22"/>
+        <Property name="autoscrolls" type="boolean" value="true"/>
       </Properties>
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -186,12 +187,15 @@
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Times New Roman" size="10" style="0"/>
+              <Font name="Times New Roman" size="12" style="0"/>
             </Property>
             <Property name="rows" type="int" value="5"/>
             <Property name="alignmentX" type="float" value="0.0"/>
             <Property name="alignmentY" type="float" value="0.0"/>
           </Properties>
+          <Events>
+            <EventHandler event="componentAdded" listener="java.awt.event.ContainerListener" parameters="java.awt.event.ContainerEvent" handler="jTextAreaConsoleComponentAdded"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -258,7 +262,7 @@
         <Property name="text" type="java.lang.String" value="Current Sessions:"/>
       </Properties>
     </Component>
-    <Container class="javax.swing.JScrollPane" name="jScrollPaneConsole1">
+    <Container class="javax.swing.JScrollPane" name="jScrollPaneSessions">
       <Properties>
         <Property name="horizontalScrollBarPolicy" type="int" value="31"/>
         <Property name="verticalScrollBarPolicy" type="int" value="22"/>
@@ -269,7 +273,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextArea" name="jTextAreaConsole1">
+        <Component class="javax.swing.JTextArea" name="jTextAreaSessions">
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
